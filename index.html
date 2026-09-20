@@ -1,0 +1,3634 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7Б • Классный портал</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --primary: #059669;
+    --primary-dark: #047857;
+    --primary-light: #10b981;
+    --primary-glow: rgba(5, 150, 105, .25);
+    --accent: #f59e0b;
+    --accent-2: #8b5cf6;
+    --accent-3: #ec4899;
+    --bg: #f0fdf4;
+    --bg-2: #ecfdf5;
+    --card: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #d1fae5;
+    --danger: #ef4444;
+    --success: #10b981;
+    --gold-1: #fbbf24;
+    --gold-2: #f59e0b;
+    --gold-3: #d97706;
+    --radius: 16px;
+    --shadow: 0 8px 24px rgba(5, 150, 105, .08);
+    --shadow-lg: 0 20px 60px rgba(5, 150, 105, .15);
+    --input-bg: #f8fffe;
+    --font-head: 'Fredoka', 'Nunito', sans-serif;
+    --font-body: 'Nunito', system-ui, sans-serif;
+  }
+  body.dark {
+    --primary: #10b981;
+    --primary-dark: #34d399;
+    --primary-light: #6ee7b7;
+    --primary-glow: rgba(16, 185, 129, .3);
+    --bg: #0a1612;
+    --bg-2: #0f1e1a;
+    --card: #14261f;
+    --text: #ecfdf5;
+    --muted: #86a89b;
+    --border: #1e3a32;
+    --input-bg: #0f1e1a;
+    --shadow: 0 8px 24px rgba(0, 0, 0, .4);
+    --shadow-lg: 0 20px 60px rgba(0, 0, 0, .6);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg); color: var(--text);
+    font-size: 17px; line-height: 1.55;
+    min-height: 100vh;
+    transition: background .4s, color .4s;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, h4, .logo, .day-title, .pomo-time { font-family: var(--font-head); letter-spacing: .3px; }
+
+  body.disco { animation: discoBg 1s linear infinite; }
+  @keyframes discoBg {
+    0%   { background: #ff0080; } 25%  { background: #00ff80; }
+    50%  { background: #8000ff; } 75%  { background: #ff8000; }
+    100% { background: #ff0080; }
+  }
+  body.disco header { animation: discoBg .5s linear infinite; }
+
+  #scroll-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--primary), var(--accent), var(--accent-2), var(--primary));
+    background-size: 200% 100%; animation: gradientMove 3s linear infinite;
+    z-index: 9999; transition: width .1s linear; box-shadow: 0 0 12px var(--primary-glow);
+  }
+  @keyframes gradientMove { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+
+  .blob {
+    position: fixed; border-radius: 50%; filter: blur(80px); opacity: .35;
+    z-index: 0; pointer-events: none; animation: blobFloat 20s ease-in-out infinite;
+  }
+  .blob-1 { width: 400px; height: 400px; background: var(--primary); top: -100px; left: -100px; }
+  .blob-2 { width: 300px; height: 300px; background: var(--accent); bottom: -50px; right: -80px; animation-delay: -7s; }
+  .blob-3 { width: 250px; height: 250px; background: var(--accent-2); top: 40%; right: 20%; animation-delay: -14s; opacity: .15; }
+  @keyframes blobFloat {
+    0%,100% { transform: translate(0,0) scale(1); }
+    33% { transform: translate(60px, -40px) scale(1.1); }
+    66% { transform: translate(-40px, 50px) scale(.9); }
+  }
+
+  #particles { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+  .particle { position: absolute; opacity: .35; animation: floatParticle linear infinite; color: var(--primary); }
+  @keyframes floatParticle { from { transform: translateY(100vh) rotate(0deg); } to { transform: translateY(-100px) rotate(360deg); } }
+
+  /* AUTH */
+  .auth-screen {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 24px; position: relative; z-index: 2;
+    background:
+      radial-gradient(circle at 10% 20%, rgba(16,185,129,.15) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(245,158,11,.12) 0%, transparent 40%);
+  }
+  .auth-card {
+    background: var(--card); border-radius: 24px;
+    padding: 40px 36px; width: 100%; max-width: 460px;
+    box-shadow: var(--shadow-lg); animation: rise .6s ease;
+    border: 1px solid var(--border); position: relative; overflow: hidden;
+  }
+  .auth-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--accent), var(--accent-2));
+    background-size: 200% 100%; animation: gradientMove 3s linear infinite;
+  }
+  .auth-logo { text-align: center; margin-bottom: 24px; }
+  .auth-logo .logo-icon { font-size: 56px; color: var(--primary); display: inline-block; animation: spinPulse 4s ease infinite; }
+  @keyframes spinPulse { 0%,100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.1) rotate(-8deg); } }
+  .auth-logo h1 {
+    font-size: 52px; margin-top: 8px; letter-spacing: 2px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light), var(--accent));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%; animation: gradientMove 4s ease infinite;
+  }
+  .auth-logo p { color: var(--muted); font-size: 15px; }
+  .auth-form h2 { font-size: 22px; margin-bottom: 16px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .auth-form h2 i { color: var(--primary); }
+  .auth-form label { display: block; font-size: 15px; font-weight: 600; margin: 12px 0 6px; }
+  .auth-form .req { color: var(--danger); }
+  .auth-form input, .textarea, .modal-card input, .modal-card textarea {
+    width: 100%; padding: 13px 16px; font-size: 16px;
+    border: 2px solid var(--border); border-radius: 12px;
+    background: var(--input-bg); color: var(--text);
+    font-family: inherit; transition: border-color .2s, box-shadow .2s;
+  }
+  .auth-form input:focus, .textarea:focus, .modal-card input:focus, .modal-card textarea:focus {
+    outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow);
+  }
+  .textarea { resize: vertical; min-height: 90px; }
+
+  .avatar-picker { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-top: 6px; }
+  .avatar-opt {
+    aspect-ratio: 1; border-radius: 10px;
+    border: 2px solid var(--border); background: var(--bg-2);
+    color: var(--muted); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; transition: all .2s;
+  }
+  .avatar-opt:hover { border-color: var(--primary); color: var(--primary); transform: scale(1.1); }
+  .avatar-opt.selected {
+    border-color: var(--primary); color: #fff;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    transform: scale(1.1); box-shadow: 0 4px 12px var(--primary-glow);
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px; padding: 12px 20px; font-size: 16px;
+    font-family: var(--font-head); font-weight: 600;
+    border: 2px solid var(--border); background: var(--card);
+    color: var(--text); border-radius: 12px; cursor: pointer;
+    transition: transform .15s, background .2s, box-shadow .2s, border-color .2s, color .2s;
+    position: relative; overflow: hidden;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .btn:active { transform: translateY(0) scale(.98); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    background-size: 200% 200%; border-color: transparent; color: #fff;
+    width: 100%; margin-top: 20px; box-shadow: 0 6px 18px var(--primary-glow);
+  }
+  .btn-primary:hover { background-position: 100% 0; box-shadow: 0 12px 28px var(--primary-glow); }
+  .btn-danger { background: var(--danger); color: #fff; border-color: transparent; }
+  .btn-small { padding: 8px 14px; font-size: 14px; width: auto; margin: 0; }
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold-1), var(--gold-3));
+    background-size: 200% 200%; border-color: transparent; color: #fff;
+    box-shadow: 0 6px 18px rgba(245,158,11,.4);
+  }
+  .btn-gold:hover { background-position: 100% 0; box-shadow: 0 12px 28px rgba(245,158,11,.6); }
+
+  .auth-switch { text-align: center; margin-top: 14px; font-size: 15px; color: var(--muted); }
+  .auth-switch a { color: var(--primary); cursor: pointer; font-weight: 600; }
+  .auth-switch a:hover { text-decoration: underline; }
+  .auth-error { color: var(--danger); font-size: 14px; text-align: center; margin-top: 8px; min-height: 20px; }
+
+  /* HEADER */
+  #app { min-height: 100vh; position: relative; z-index: 2; }
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 32px; background: var(--card);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 12px rgba(5,150,105,.05);
+    transition: background .4s;
+  }
+  header::after {
+    content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary), var(--accent), var(--primary), transparent);
+    background-size: 200% 100%; animation: gradientMove 4s linear infinite;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 28px; font-weight: 700; letter-spacing: 1px;
+    color: var(--primary); cursor: pointer; user-select: none;
+    transition: transform .2s;
+  }
+  .logo:hover { transform: scale(1.05) rotate(-2deg); }
+  .logo i { font-size: 32px; animation: leafWiggle 3s ease infinite; }
+  @keyframes leafWiggle { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
+  .user-info { display: flex; align-items: center; gap: 12px; font-size: 16px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    background-size: 200% 200%;
+    animation: crownGlow 2s ease infinite, gradientMove 3s ease infinite;
+    color: #78350f; font-size: 13px; font-weight: 800;
+    padding: 5px 12px; border-radius: 20px;
+    font-family: var(--font-head);
+  }
+  @keyframes crownGlow {
+    0%,100% { box-shadow: 0 2px 8px rgba(245,158,11,.4); }
+    50% { box-shadow: 0 4px 20px rgba(245,158,11,.8); }
+  }
+  .icon-btn {
+    width: 42px; height: 42px; border-radius: 12px;
+    border: 2px solid var(--border); background: var(--card);
+    color: var(--text); font-size: 16px; cursor: pointer;
+    transition: all .25s; display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .icon-btn:hover {
+    border-color: var(--primary); color: var(--primary);
+    transform: rotate(-10deg) scale(1.08); box-shadow: 0 6px 18px var(--primary-glow);
+  }
+  .icon-btn .dot {
+    position: absolute; top: -4px; right: -4px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--danger); border: 2px solid var(--card);
+    display: none;
+  }
+  .icon-btn.has-new .dot { display: block; animation: pop 1s ease infinite; }
+  .icon-btn.syncing i { animation: spin360 1s linear infinite; }
+  .icon-btn.online { border-color: var(--success); }
+  .icon-btn.offline { border-color: var(--danger); }
+  .icon-btn.online i { color: var(--success); }
+  .icon-btn.offline i { color: var(--danger); }
+
+  .profile-chip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 14px 6px 6px;
+    background: var(--bg-2); border-radius: 30px;
+    border: 2px solid transparent; cursor: pointer;
+    transition: all .25s; position: relative;
+  }
+  .profile-chip:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow); }
+  .profile-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+    box-shadow: 0 4px 12px var(--primary-glow);
+  }
+  .profile-avatar.owner {
+    background: linear-gradient(135deg, var(--gold-1), var(--gold-3));
+    box-shadow: 0 4px 16px rgba(245,158,11,.6), 0 0 0 2px var(--gold-1);
+    animation: crownGlow 2s ease infinite;
+  }
+  .profile-info { display: flex; flex-direction: column; line-height: 1.1; }
+  .profile-name { font-size: 15px; font-weight: 700; font-family: var(--font-head); }
+  .profile-level { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+  .xp-bar-mini { width: 60px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 2px; }
+  .xp-bar-mini > div { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width .4s; }
+
+  .profile-menu {
+    position: absolute; top: calc(100% + 8px); right: 0;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px;
+    box-shadow: var(--shadow-lg); width: 300px;
+    z-index: 100; display: none; animation: rise .25s ease;
+  }
+  .profile-menu.open { display: block; }
+  .profile-menu h4 { font-family: var(--font-head); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .profile-menu .stat-row {
+    display: flex; justify-content: space-between;
+    padding: 6px 0; font-size: 14px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .profile-menu .stat-row:last-of-type { border-bottom: none; }
+  .profile-menu .stat-row b { color: var(--primary); }
+  .profile-menu .avatar-change { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; margin-top: 12px; }
+  .profile-menu .avatar-change .avatar-opt { font-size: 14px; }
+
+  /* TABS */
+  .tabs { display: flex; gap: 8px; padding: 14px 32px 0; flex-wrap: wrap; }
+  .tab {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px; font-size: 15px; font-weight: 700;
+    font-family: var(--font-head); border: 2px solid transparent;
+    background: var(--card); color: var(--muted);
+    border-radius: 12px; cursor: pointer;
+    transition: all .25s; position: relative;
+  }
+  .tab:hover { color: var(--primary); transform: translateY(-3px); box-shadow: var(--shadow); }
+  .tab.active {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    background-size: 200% 200%; color: #fff;
+    box-shadow: 0 6px 20px var(--primary-glow);
+    transform: translateY(-2px); animation: gradientMove 5s ease infinite;
+  }
+  .tab.active i { animation: iconBounce .5s ease; }
+  .tab .tab-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--danger); position: absolute;
+    top: 6px; right: 6px; display: none;
+  }
+  .tab.has-new .tab-dot { display: block; animation: pop 1s ease infinite; }
+  @keyframes iconBounce {
+    0% { transform: scale(0) rotate(-180deg); }
+    60% { transform: scale(1.3) rotate(20deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
+
+  main { padding: 20px 32px 100px; max-width: 1200px; margin: 0 auto; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeUp .4s ease; }
+
+  .section-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+  }
+  .section-head h2 { font-size: 26px; display: flex; align-items: center; gap: 10px; }
+  .section-head h2 i { color: var(--primary); animation: iconFloat 3s ease infinite; }
+  @keyframes iconFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  .grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+  .card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 22px; box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    transition: transform .25s, box-shadow .25s, border-color .25s;
+    animation: fadeUp .4s ease both;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    background-size: 200% 100%; animation: gradientMove 3s linear infinite;
+    transform: scaleX(0); transform-origin: left; transition: transform .4s;
+  }
+  .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: var(--primary-light); }
+  .card:hover::before { transform: scaleX(1); }
+  .card .card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .card .card-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, rgba(16,185,129,.15), rgba(5,150,105,.25));
+    color: var(--primary); font-size: 20px; flex-shrink: 0;
+    transition: transform .3s;
+  }
+  .card:hover .card-icon { transform: rotate(-10deg) scale(1.15); }
+  .card h3 { font-size: 18px; line-height: 1.3; }
+  .card .date { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .card p { color: var(--text); font-size: 16px; opacity: .85; }
+  .card .card-actions { display: flex; gap: 8px; margin-top: 14px; justify-content: flex-end; }
+  .mini-btn {
+    border: none; background: transparent; color: var(--muted);
+    cursor: pointer; font-size: 15px; padding: 6px 10px;
+    border-radius: 8px; transition: all .2s; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .mini-btn:hover { background: var(--bg-2); color: var(--primary); }
+  .mini-btn.danger:hover { background: rgba(239,68,68,.1); color: var(--danger); }
+
+  .reactions {
+    display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap;
+    border-top: 1px dashed var(--border); padding-top: 12px;
+  }
+  .react-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 11px; border-radius: 20px;
+    background: var(--bg-2); border: 2px solid transparent;
+    cursor: pointer; font-size: 14px; font-weight: 700;
+    color: var(--muted); transition: all .2s;
+    font-family: var(--font-head);
+  }
+  .react-btn:hover { border-color: var(--primary); transform: scale(1.08); }
+  .react-btn i { font-size: 15px; }
+  .react-btn.active {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff; border-color: transparent;
+  }
+  .react-btn.active i { animation: pop .4s ease; }
+
+  .widgets-row {
+    display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    margin-bottom: 20px;
+  }
+  .widget {
+    background: var(--card); border-radius: var(--radius);
+    padding: 20px; box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    animation: fadeUp .4s ease both;
+    position: relative; overflow: hidden;
+  }
+  .widget h3 { font-size: 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; color: var(--primary); }
+  .widget.quote-widget { background: linear-gradient(135deg, rgba(16,185,129,.08), rgba(245,158,11,.08)); }
+  .widget .quote-text { font-style: italic; font-size: 16px; }
+  .widget .quote-author { font-size: 13px; color: var(--muted); margin-top: 8px; text-align: right; }
+  .poll-option {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 14px; margin-bottom: 6px;
+    background: var(--bg-2); border-radius: 10px;
+    cursor: pointer; transition: all .2s;
+    border: 2px solid transparent;
+    position: relative; overflow: hidden;
+  }
+  .poll-option:hover { border-color: var(--primary); transform: translateX(4px); }
+  .poll-option.voted { border-color: var(--primary); background: rgba(16,185,129,.1); cursor: default; }
+  .poll-option .poll-fill {
+    position: absolute; top: 0; left: 0; bottom: 0;
+    background: linear-gradient(90deg, rgba(16,185,129,.2), rgba(16,185,129,.35));
+    transition: width .5s ease; z-index: 0; border-radius: 10px;
+  }
+  .poll-option > * { position: relative; z-index: 1; }
+  .poll-label { font-weight: 600; font-size: 14px; }
+  .poll-count { font-size: 13px; color: var(--muted); font-weight: 700; }
+
+  .day-card .day-title {
+    font-size: 19px; font-weight: 600; margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+  .day-title .day-name { display: flex; align-items: center; gap: 10px; }
+  .day-title i { color: var(--primary); }
+  .lesson-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .lesson-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; background: var(--bg-2);
+    border-radius: 10px; font-size: 16px;
+    transition: background .25s, transform .25s;
+  }
+  .lesson-item:hover { background: rgba(16,185,129,.15); transform: translateX(5px); }
+  .lesson-num {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; flex-shrink: 0;
+    font-family: var(--font-head);
+  }
+
+  .hw-item {
+    background: var(--bg-2); border-left: 4px solid var(--accent);
+    border-radius: 10px; padding: 12px 14px;
+    margin-bottom: 8px; font-size: 15px;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .hw-item:hover { transform: translateX(5px); box-shadow: 0 4px 12px rgba(245,158,11,.15); }
+  .hw-item .hw-subject {
+    font-weight: 800; color: var(--primary);
+    font-size: 14px; display: block; margin-bottom: 4px;
+    font-family: var(--font-head); letter-spacing: .3px;
+  }
+
+  .question-card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 20px; box-shadow: var(--shadow);
+    border: 1px solid var(--border); margin-bottom: 14px;
+    animation: fadeUp .4s ease both;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .question-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+  .question-card .q-head { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+  .q-author {
+    background: linear-gradient(135deg, rgba(16,185,129,.15), rgba(5,150,105,.25));
+    color: var(--primary); padding: 4px 12px; border-radius: 20px;
+    font-size: 14px; font-weight: 700;
+    font-family: var(--font-head);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .q-author.owner {
+    background: linear-gradient(135deg, var(--gold-1), var(--gold-3));
+    color: #fff; box-shadow: 0 2px 10px rgba(245,158,11,.5);
+  }
+  .q-author .mini-av {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px;
+  }
+  .q-author.owner .mini-av { background: rgba(255,255,255,.3); }
+  .question-card .q-time { color: var(--muted); font-size: 13px; display: inline-flex; align-items: center; gap: 5px; }
+  .question-card .q-text { font-size: 16px; }
+  .answer-block {
+    margin-top: 10px; padding: 10px 14px;
+    background: rgba(16,185,129,.1);
+    border-left: 4px solid var(--success);
+    border-radius: 8px; font-size: 15px;
+    display: flex; gap: 8px;
+  }
+  .answer-block i { color: var(--success); margin-top: 3px; }
+
+  .games-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .game-card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 24px 20px; box-shadow: var(--shadow);
+    border: 1px solid var(--border); text-align: center; cursor: pointer;
+    transition: all .3s cubic-bezier(.34,1.56,.64,1);
+    position: relative; overflow: hidden;
+  }
+  .game-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--primary), var(--accent-2));
+    opacity: 0; transition: opacity .3s; z-index: 0;
+  }
+  .game-card > * { position: relative; z-index: 1; }
+  .game-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+  .game-card:hover::before { opacity: .06; }
+  .game-card .game-icon {
+    font-size: 48px; margin-bottom: 12px;
+    display: inline-block; color: var(--primary);
+    animation: iconFloat 3s ease infinite; transition: transform .3s;
+  }
+  .game-card:hover .game-icon { transform: scale(1.15) rotate(-8deg); color: var(--accent); }
+  .game-card h3 { font-size: 18px; margin-bottom: 6px; }
+  .game-card p { color: var(--muted); font-size: 14px; }
+
+  .fun-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  .fun-card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 22px 18px; box-shadow: var(--shadow);
+    border: 1px solid var(--border); cursor: pointer;
+    text-align: center; transition: all .3s cubic-bezier(.34,1.56,.64,1);
+    position: relative; overflow: hidden;
+  }
+  .fun-card:hover { transform: translateY(-6px) rotate(-1deg); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+  .fun-card .fun-icon { font-size: 40px; color: var(--primary); margin-bottom: 10px; display: inline-block; transition: transform .3s; }
+  .fun-card:hover .fun-icon { transform: scale(1.2) rotate(10deg); }
+  .fun-card h4 { font-size: 16px; margin-bottom: 4px; }
+  .fun-card p { font-size: 13px; color: var(--muted); }
+  .fun-result {
+    margin-top: 20px; padding: 24px;
+    background: linear-gradient(135deg, rgba(16,185,129,.08), rgba(139,92,246,.08));
+    border-radius: var(--radius);
+    border: 1px dashed var(--primary-light);
+    font-size: 17px; text-align: center;
+    animation: rise .35s ease; min-height: 100px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 10px;
+  }
+  .fun-result .fun-result-icon { font-size: 42px; color: var(--accent); }
+  .fun-result .fun-result-text { font-family: var(--font-head); font-weight: 600; }
+
+  /* CHAT */
+  .chat-wrap {
+    display: flex; flex-direction: column;
+    height: 65vh; min-height: 400px;
+    background: var(--card); border-radius: var(--radius);
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .chat-head {
+    padding: 14px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(135deg, rgba(16,185,129,.05), transparent);
+  }
+  .chat-head h3 { font-size: 18px; display: flex; align-items: center; gap: 8px; }
+  .chat-head h3 i { color: var(--primary); }
+  .online-count {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; color: var(--muted); font-weight: 700;
+    font-family: var(--font-head);
+  }
+  .online-count .online-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--success);
+    box-shadow: 0 0 8px var(--success); animation: pulseDot 2s ease infinite;
+  }
+  @keyframes pulseDot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: .6; } }
+  .chat-messages {
+    flex: 1; overflow-y: auto; padding: 18px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .chat-msg { display: flex; gap: 10px; animation: fadeUp .3s ease; max-width: 85%; }
+  .chat-msg.own { align-self: flex-end; flex-direction: row-reverse; }
+  .chat-msg .msg-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0; position: relative;
+  }
+  .chat-msg.own .msg-avatar { background: linear-gradient(135deg, var(--accent), #ea580c); }
+  .chat-msg .msg-avatar.owner {
+    background: linear-gradient(135deg, var(--gold-1), var(--gold-3));
+    color: #fff;
+    box-shadow: 0 0 0 2px var(--gold-1), 0 0 12px rgba(245,158,11,.8), 0 0 24px rgba(245,158,11,.4);
+    animation: crownGlow 2s ease infinite;
+  }
+  .chat-msg .msg-avatar.owner::after {
+    content: ''; position: absolute; inset: -4px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, var(--gold-1), var(--gold-3), var(--gold-1), var(--gold-3), var(--gold-1));
+    z-index: -1;
+    animation: spin360 4s linear infinite;
+    filter: blur(2px);
+    opacity: .7;
+  }
+  .chat-msg .msg-body {
+    background: var(--bg-2); padding: 9px 14px;
+    border-radius: 14px; border-top-left-radius: 4px;
+  }
+  .chat-msg.own .msg-body {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff; border-top-left-radius: 14px; border-top-right-radius: 4px;
+  }
+  .chat-msg.own .msg-author { color: rgba(255,255,255,.85) !important; }
+  .chat-msg.own .msg-time { color: rgba(255,255,255,.7) !important; }
+  .chat-msg.own .msg-level { background: rgba(255,255,255,.2) !important; color: #fff !important; }
+  .chat-msg .msg-author {
+    font-size: 12px; font-weight: 700; color: var(--primary);
+    margin-bottom: 3px; font-family: var(--font-head);
+    display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
+  }
+  .chat-msg .msg-time { font-size: 11px; color: var(--muted); margin-left: 6px; font-weight: 500; }
+  .chat-msg .msg-text { font-size: 15px; word-wrap: break-word; }
+  .owner-prefix {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 1px 8px;
+    background: linear-gradient(135deg, var(--gold-1), var(--gold-3));
+    background-size: 200% 200%;
+    animation: gradientMove 2s ease infinite;
+    color: #fff; font-size: 10px; font-weight: 800;
+    border-radius: 8px; text-transform: uppercase;
+    letter-spacing: .5px;
+    font-family: var(--font-head);
+    box-shadow: 0 0 8px rgba(245,158,11,.6);
+  }
+  .owner-prefix i { font-size: 10px; }
+  .msg-level {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 1px 7px;
+    background: var(--bg-2);
+    color: var(--primary);
+    font-size: 10px; font-weight: 800;
+    border-radius: 6px;
+    font-family: var(--font-head);
+    border: 1px solid var(--border);
+  }
+  .msg-level i { font-size: 9px; }
+  .chat-input-row {
+    padding: 12px 16px; border-top: 1px solid var(--border);
+    display: flex; gap: 8px; background: var(--card);
+  }
+  .chat-input-row input {
+    flex: 1; padding: 11px 16px;
+    border: 2px solid var(--border); border-radius: 22px;
+    background: var(--input-bg); color: var(--text);
+    font-family: inherit; font-size: 15px;
+  }
+  .chat-input-row input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); }
+  .chat-send {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff; border: none; font-size: 16px; cursor: pointer;
+    transition: transform .2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .chat-send:hover { transform: scale(1.1) rotate(-10deg); }
+  .chat-emojis { display: flex; gap: 4px; margin-right: 4px; }
+  .chat-emoji-btn {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: transparent; border: none;
+    color: var(--muted); cursor: pointer; font-size: 16px;
+    transition: all .2s;
+  }
+  .chat-emoji-btn:hover { background: var(--bg-2); color: var(--primary); transform: scale(1.15); }
+
+  /* HONOR BOARD */
+  .honor-grid {
+    display: grid; gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+  .honor-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 2px solid transparent;
+    position: relative; overflow: hidden;
+    transition: transform .3s, box-shadow .3s;
+    animation: fadeUp .5s ease both;
+  }
+  .honor-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 20px 50px rgba(245,158,11,.3); }
+  .honor-card::before {
+    content: ''; position: absolute; inset: -2px;
+    background: conic-gradient(from 0deg, var(--gold-1), var(--gold-3), var(--gold-1), var(--gold-3), var(--gold-1));
+    z-index: -1; border-radius: var(--radius);
+    animation: spin360 6s linear infinite;
+    opacity: .8;
+  }
+  .honor-card::after {
+    content: ''; position: absolute; inset: 0;
+    background: var(--card); z-index: -1; border-radius: calc(var(--radius) - 2px);
+    margin: 2px;
+  }
+  .honor-shine {
+    position: absolute; inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.5) 50%, transparent 70%);
+    animation: shineMove 4s ease-in-out infinite;
+    pointer-events: none;
+    border-radius: var(--radius);
+  }
+  @keyframes shineMove {
+    0% { transform: translateX(-100%); }
+    50%, 100% { transform: translateX(100%); }
+  }
+  .honor-avatar {
+    width: 90px; height: 90px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-1), var(--gold-3));
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 40px; margin: 0 auto 12px;
+    box-shadow: 0 8px 20px rgba(245,158,11,.4), 0 0 0 3px rgba(245,158,11,.3);
+    position: relative;
+    overflow: hidden;
+  }
+  .honor-avatar img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block; border-radius: 50%;
+  }
+  .honor-avatar::after {
+    content: '\f521';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    top: -8px; right: -8px;
+    font-size: 24px;
+    color: var(--gold-2);
+    filter: drop-shadow(0 0 6px rgba(245,158,11,.8));
+    z-index: 2;
+    pointer-events: none;
+  }
+  .honor-name {
+    font-family: var(--font-head);
+    font-size: 19px; font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+  .honor-reason {
+    font-size: 14px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.4;
+  }
+  .honor-date {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .honor-stars {
+    color: var(--gold-2);
+    font-size: 14px;
+    margin-top: 8px;
+    letter-spacing: 2px;
+  }
+  .honor-delete {
+    position: absolute; top: 10px; right: 10px;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(239,68,68,.15); color: var(--danger);
+    border: none; cursor: pointer;
+    font-size: 13px;
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 5;
+    transition: all .2s;
+  }
+  .honor-delete:hover { background: var(--danger); color: #fff; transform: scale(1.15); }
+  .honor-card:hover .honor-delete { display: flex; }
+  .honor-empty {
+    grid-column: 1 / -1;
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--muted);
+  }
+  .honor-empty i {
+    font-size: 64px; color: var(--gold-2); display: block;
+    margin-bottom: 16px;
+    animation: iconFloat 3s ease infinite;
+  }
+  .honor-photo-preview {
+    margin-top: 12px;
+    text-align: center;
+    display: none;
+  }
+  .honor-photo-preview img {
+    width: 120px; height: 120px; object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid var(--gold-1);
+    box-shadow: 0 8px 20px rgba(245,158,11,.4);
+  }
+  .honor-file-row {
+    display: flex; gap: 10px; align-items: center;
+  }
+  .honor-file-row input[type=file] {
+    flex: 1; padding: 10px 12px; font-size: 14px;
+    cursor: pointer;
+  }
+  .honor-file-row input[type=file]::file-selector-button {
+    background: var(--primary); color: #fff; border: none;
+    padding: 6px 14px; border-radius: 8px;
+    font-family: var(--font-head); font-weight: 600;
+    cursor: pointer; margin-right: 10px;
+    transition: background .2s;
+  }
+  .honor-file-row input[type=file]::file-selector-button:hover { background: var(--primary-dark); }
+
+  /* PET */
+  .pet-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 800px; margin: 0 auto; }
+  .pet-card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 26px; text-align: center;
+    box-shadow: var(--shadow); border: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .pet-avatar {
+    font-size: 100px; color: var(--primary);
+    display: inline-block; margin: 10px 0;
+    cursor: pointer; transition: transform .3s;
+    animation: petIdle 3s ease-in-out infinite; user-select: none;
+  }
+  @keyframes petIdle {
+    0%,100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-8px) rotate(3deg); }
+  }
+  .pet-avatar.happy { animation: petHappy .5s ease infinite; }
+  @keyframes petHappy {
+    0%,100% { transform: scale(1) rotate(-8deg); }
+    50% { transform: scale(1.15) rotate(8deg); }
+  }
+  .pet-avatar.sad { filter: grayscale(.6) brightness(.8); }
+  .pet-name {
+    font-family: var(--font-head);
+    font-size: 22px; font-weight: 700;
+    color: var(--primary);
+    display: inline-flex; align-items: center; gap: 8px;
+    justify-content: center;
+  }
+  .pet-rename-btn {
+    background: transparent; border: none;
+    color: var(--muted); font-size: 13px;
+    cursor: pointer; padding: 4px 6px; border-radius: 6px;
+    transition: all .2s;
+  }
+  .pet-rename-btn:hover { background: var(--bg-2); color: var(--primary); transform: rotate(-10deg); }
+  .pet-stats { margin-top: 16px; text-align: left; }
+  .pet-stat { margin-bottom: 10px; }
+  .pet-stat-label {
+    display: flex; justify-content: space-between;
+    font-size: 13px; font-weight: 700;
+    font-family: var(--font-head);
+    margin-bottom: 4px; color: var(--muted);
+  }
+  .pet-stat-bar { height: 12px; border-radius: 6px; background: var(--border); overflow: hidden; }
+  .pet-stat-bar > div {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    transition: width .4s; border-radius: 6px;
+  }
+  .pet-stat-bar.hunger > div { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+  .pet-stat-bar.mood > div { background: linear-gradient(90deg, #8b5cf6, #ec4899); }
+  .pet-actions { display: flex; gap: 8px; margin-top: 16px; justify-content: center; flex-wrap: wrap; }
+  .pet-actions .btn { width: auto; margin: 0; padding: 10px 16px; font-size: 14px; }
+
+  /* ACHIEVEMENTS */
+  .ach-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .ach-card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 18px; box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    display: flex; gap: 14px; align-items: center;
+    position: relative; overflow: hidden;
+    transition: all .25s;
+  }
+  .ach-card.locked { opacity: .45; filter: grayscale(.7); }
+  .ach-card.unlocked { border-color: var(--primary); }
+  .ach-card.unlocked::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+  }
+  .ach-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(16,185,129,.15), rgba(5,150,105,.25));
+    color: var(--primary);
+  }
+  .ach-card.locked .ach-icon { background: var(--bg-2); color: var(--muted); }
+  .ach-info h4 { font-size: 15px; margin-bottom: 3px; }
+  .ach-info p { font-size: 13px; color: var(--muted); }
+
+  .doodle-wrap {
+    background: var(--card); border-radius: var(--radius);
+    padding: 20px; border: 1px solid var(--border); box-shadow: var(--shadow);
+  }
+  .doodle-tools { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
+  .doodle-tools .color-btn {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 3px solid var(--border); cursor: pointer; transition: transform .2s;
+  }
+  .doodle-tools .color-btn:hover { transform: scale(1.15); }
+  .doodle-tools .color-btn.active { border-color: var(--text); transform: scale(1.15); }
+  .doodle-tools input[type=range] { flex: 1; min-width: 100px; max-width: 150px; accent-color: var(--primary); }
+  #doodle-canvas {
+    width: 100%; height: 400px; background: #fff;
+    border-radius: 12px; border: 2px solid var(--border);
+    cursor: crosshair; touch-action: none; display: block;
+  }
+  body.dark #doodle-canvas { background: #1a1f2e; }
+
+  .modal {
+    position: fixed; inset: 0;
+    background: rgba(5,20,15,.55);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px; z-index: 100; backdrop-filter: blur(6px);
+  }
+  .modal.open { display: flex; animation: fadeIn .25s ease; }
+  .modal-card {
+    background: var(--card); color: var(--text);
+    border-radius: 20px; padding: 28px;
+    max-width: 560px; width: 100%;
+    max-height: 90vh; overflow-y: auto;
+    animation: rise .35s cubic-bezier(.34,1.56,.64,1);
+    border: 1px solid var(--border); position: relative;
+  }
+  .modal-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--accent), var(--accent-2));
+    background-size: 200% 100%; animation: gradientMove 3s linear infinite;
+    border-radius: 20px 20px 0 0;
+  }
+  .modal-card h3 { font-size: 22px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .modal-card h3 i { color: var(--primary); }
+  .modal-card label { display: block; font-size: 15px; font-weight: 600; margin: 12px 0 6px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 22px; justify-content: flex-end; }
+  .modal-actions .btn { width: auto; margin-top: 0; }
+
+  .pomodoro { position: fixed; bottom: 24px; right: 24px; z-index: 80; }
+  .pomodoro-btn {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff; border: none; font-size: 24px; cursor: pointer;
+    box-shadow: 0 8px 24px var(--primary-glow);
+    transition: transform .25s;
+    animation: pomoPulse 3s ease infinite;
+    display: flex; align-items: center; justify-content: center;
+  }
+  @keyframes pomoPulse {
+    0%,100% { box-shadow: 0 8px 24px var(--primary-glow); }
+    50% { box-shadow: 0 8px 32px var(--primary-glow), 0 0 0 10px rgba(16,185,129,.08); }
+  }
+  .pomodoro-btn:hover { transform: scale(1.1) rotate(-10deg); }
+  .pomodoro-panel {
+    position: absolute; bottom: 74px; right: 0;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 18px;
+    box-shadow: var(--shadow-lg); width: 250px;
+    display: none; animation: rise .3s ease;
+  }
+  .pomodoro-panel.open { display: block; }
+  .pomo-time {
+    font-size: 40px; font-weight: 700; text-align: center;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 12px; letter-spacing: 2px;
+  }
+  .pomo-controls { display: flex; gap: 8px; justify-content: center; }
+  .pomo-controls .btn { width: 46px; height: 46px; padding: 0; font-size: 16px; }
+
+  #scroll-top {
+    position: fixed; bottom: 24px; left: 24px;
+    width: 46px; height: 46px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #f97316);
+    color: #fff; border: none; font-size: 18px; cursor: pointer;
+    box-shadow: 0 8px 20px rgba(245,158,11,.4);
+    display: none; align-items: center; justify-content: center;
+    z-index: 80; transition: transform .25s;
+  }
+  #scroll-top.show { display: flex; animation: rise .3s ease; }
+  #scroll-top:hover { transform: translateY(-5px) scale(1.1); }
+
+  .empty { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 16px; }
+  .empty i { font-size: 48px; display: block; margin-bottom: 12px; opacity: .5; color: var(--primary); }
+  .empty-inline { padding: 12px; text-align: center; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(20px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes floatUp { from { transform: translateY(100vh) rotate(0deg); opacity: 1; } to { transform: translateY(-20vh) rotate(720deg); opacity: 0; } }
+  @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-3deg); } 75% { transform: translateX(6px) rotate(3deg); } }
+  @keyframes spin360 { to { transform: rotate(360deg); } }
+
+  .easter-float { position: fixed; bottom: -80px; font-size: 40px; pointer-events: none; animation: floatUp 4s linear forwards; z-index: 999; }
+  .easter-float i { color: var(--primary); text-shadow: 0 0 20px var(--primary-glow); }
+  .emoji-burst { position: fixed; font-size: 32px; pointer-events: none; z-index: 999; animation: burstOut .8s ease-out forwards; }
+  @keyframes burstOut {
+    from { transform: translate(-50%,-50%) scale(.5); opacity: 1; }
+    to { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.4); opacity: 0; }
+  }
+  .walking-cat { position: fixed; bottom: 20px; font-size: 48px; z-index: 200; pointer-events: none; animation: walkAcross 8s linear forwards; color: var(--accent); }
+  @keyframes walkAcross { from { left: -80px; } to { left: 100vw; } }
+  .secret-star {
+    position: fixed; width: 58px; height: 58px; border-radius: 50%;
+    border: 2px solid var(--primary); background: var(--card);
+    color: var(--accent); font-size: 26px; cursor: pointer;
+    z-index: 300; box-shadow: 0 0 30px var(--primary-glow);
+    animation: pomoPulse 1.5s ease infinite, spin360 4s linear infinite;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .falling-star {
+    position: fixed; font-size: 32px; cursor: pointer;
+    color: var(--accent); z-index: 250; pointer-events: auto;
+    filter: drop-shadow(0 0 12px var(--accent)); transition: transform .2s;
+  }
+  .falling-star:hover { transform: scale(1.3); }
+  @keyframes fallDown {
+    from { transform: translateY(-80px) rotate(0deg); opacity: 1; }
+    to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  .toast {
+    position: fixed; bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(200%);
+    background: var(--card); color: var(--text);
+    padding: 14px 24px; border-radius: 12px;
+    font-size: 15px; font-weight: 700;
+    font-family: var(--font-head);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border);
+    transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+    z-index: 1000; display: flex; align-items: center; gap: 10px;
+    max-width: 90vw;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast i { color: var(--primary); font-size: 20px; }
+
+  .ach-popup {
+    position: fixed; top: 90px; right: 20px;
+    background: var(--card); border: 2px solid var(--primary);
+    border-radius: 16px; padding: 16px 20px;
+    display: flex; align-items: center; gap: 14px;
+    box-shadow: var(--shadow-lg); z-index: 1500;
+    animation: slideInRight .5s cubic-bezier(.34,1.56,.64,1);
+    max-width: 340px;
+  }
+  @keyframes slideInRight { from { transform: translateX(150%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  .ach-popup.out { animation: slideOutRight .4s ease forwards; }
+  @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(150%); opacity: 0; } }
+  .ach-popup .popup-icon {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0; animation: pop 1s ease infinite;
+  }
+  .ach-popup .popup-title { font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .ach-popup .popup-name { font-family: var(--font-head); font-size: 17px; font-weight: 700; color: var(--primary); }
+
+  .mem-card {
+    aspect-ratio: 1; background: var(--bg-2); border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; cursor: pointer; color: transparent;
+    transition: all .3s; border: 2px solid var(--border); user-select: none;
+  }
+  .mem-card:hover { border-color: var(--primary); transform: scale(1.05); }
+  .mem-card i { color: transparent; transition: color .3s, transform .3s; }
+  .mem-card.flipped { background: rgba(16,185,129,.2); }
+  .mem-card.flipped i { color: var(--primary); transform: scale(1.1); }
+  .mem-card.matched { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); cursor: default; animation: pop .4s ease; }
+  .mem-card.matched i { color: #fff; }
+
+  .rps-btn { font-size: 32px; padding: 18px 22px; width: auto; margin: 0; color: var(--primary); }
+  .rps-btn:hover { color: var(--accent); }
+
+  /* SYNC STATUS */
+  .sync-banner {
+    position: fixed; top: 70px; left: 50%;
+    transform: translateX(-50%) translateY(-200%);
+    background: var(--card);
+    border: 2px solid var(--primary);
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text);
+    box-shadow: var(--shadow-lg);
+    display: flex; align-items: center; gap: 10px;
+    z-index: 999;
+    transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+    max-width: 90vw;
+  }
+  .sync-banner.show { transform: translateX(-50%) translateY(0); }
+  .sync-banner i { color: var(--primary); font-size: 16px; }
+  .sync-banner.syncing { border-color: var(--accent); }
+  .sync-banner.syncing i { color: var(--accent); animation: spin360 1s linear infinite; }
+  .sync-banner.offline { border-color: var(--danger); }
+  .sync-banner.offline i { color: var(--danger); }
+  .sync-banner.online { border-color: var(--success); }
+  .sync-banner.online i { color: var(--success); }
+
+  @media (max-width: 640px) {
+    header { padding: 10px 14px; gap: 8px; }
+    .logo { font-size: 22px; }
+    .logo span { display: none; }
+    .user-info { font-size: 14px; gap: 6px; }
+    #user-greeting { display: none; }
+    .profile-info { display: none; }
+    .profile-chip { padding: 4px; }
+    .profile-avatar { width: 34px; height: 34px; font-size: 16px; }
+    .tabs { padding: 12px 16px 0; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab { padding: 9px 13px; font-size: 13px; white-space: nowrap; }
+    main { padding: 16px 16px 100px; }
+    .section-head h2 { font-size: 22px; }
+    .grid { grid-template-columns: 1fr; }
+    .pomodoro { bottom: 16px; right: 16px; }
+    #scroll-top { bottom: 16px; left: 16px; }
+    .blob { display: none; }
+    .pet-wrap { grid-template-columns: 1fr; }
+    .chat-msg { max-width: 92%; }
+    .ach-popup { top: auto; bottom: 90px; right: 12px; left: 12px; max-width: none; }
+    .profile-menu { right: -10px; width: 280px; }
+    .honor-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+    .honor-avatar { width: 70px; height: 70px; font-size: 30px; }
+    .honor-name { font-size: 16px; }
+    .sync-banner { top: 60px; font-size: 12px; padding: 8px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+<div id="particles"></div>
+
+<!-- ============ AUTH ============ -->
+<div id="auth" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <i class="fa-solid fa-seedling logo-icon"></i>
+      <h1>7Б</h1>
+      <p><i class="fa-solid fa-star"></i> Классный портал <i class="fa-solid fa-star"></i></p>
+    </div>
+
+    <div id="auth-form-register" class="auth-form">
+      <h2><i class="fa-solid fa-user-plus"></i> Регистрация</h2>
+      <label>Имя <span class="req">*</span></label>
+      <input type="text" id="reg-name" placeholder="Настоящее имя, не ник" maxlength="20">
+      <label>Ник <span class="req">*</span></label>
+      <input type="text" id="reg-nick" placeholder="Придумайте ник" maxlength="20">
+      <label>Пароль <span class="req">*</span></label>
+      <input type="password" id="reg-pass" placeholder="Придумайте пароль">
+      <label>Аватар <span class="req">*</span></label>
+      <div class="avatar-picker" id="reg-avatars"></div>
+      <button class="btn btn-primary" onclick="register()">
+        <i class="fa-solid fa-check"></i> Создать аккаунт
+      </button>
+      <p class="auth-switch">Уже есть аккаунт? <a onclick="showLogin()">Войти</a></p>
+      <p class="auth-error" id="reg-error"></p>
+    </div>
+
+    <div id="auth-form-login" class="auth-form" style="display:none">
+      <h2><i class="fa-solid fa-right-to-bracket"></i> Вход</h2>
+      <label>Ник</label>
+      <input type="text" id="log-nick" placeholder="Ваш ник">
+      <label>Пароль</label>
+      <input type="password" id="log-pass" placeholder="Ваш пароль">
+      <button class="btn btn-primary" onclick="login()">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i> Войти
+      </button>
+      <p class="auth-switch">Нет аккаунта? <a onclick="showRegister()">Зарегистрироваться</a></p>
+      <p class="auth-error" id="log-error"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" style="display:none">
+  <header>
+    <div class="logo" id="logo" title="7Б">
+      <i class="fa-solid fa-seedling"></i>
+      <span>7Б</span>
+    </div>
+    <div class="user-info">
+      <span id="admin-badge" class="badge" style="display:none">
+        <i class="fa-solid fa-crown"></i> Владелец
+      </span>
+      <button class="icon-btn" id="sync-btn" onclick="showSyncInfo()" title="Синхронизация">
+        <i class="fa-solid fa-cloud"></i>
+      </button>
+      <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" title="Тема">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+      <button class="icon-btn" id="chat-btn" onclick="openChatTab()" title="Чат класса">
+        <i class="fa-solid fa-comments"></i>
+        <span class="dot"></span>
+      </button>
+      <div class="profile-chip" id="profile-chip" onclick="toggleProfileMenu(event)">
+        <div class="profile-avatar" id="user-avatar"><i class="fa-solid fa-user"></i></div>
+        <div class="profile-info">
+          <span class="profile-name" id="user-name">...</span>
+          <span class="profile-level"><i class="fa-solid fa-star"></i> <span id="user-level">Ур. 1</span></span>
+          <div class="xp-bar-mini"><div id="user-xp-bar" style="width:0%"></div></div>
+        </div>
+        <div class="profile-menu" id="profile-menu" onclick="event.stopPropagation()">
+          <h4><i class="fa-solid fa-id-badge"></i> Профиль</h4>
+          <div class="stat-row"><span><i class="fa-solid fa-star"></i> Уровень</span><b id="menu-level">1</b></div>
+          <div class="stat-row"><span><i class="fa-solid fa-bolt"></i> XP</span><b id="menu-xp">0 / 100</b></div>
+          <div class="stat-row"><span><i class="fa-solid fa-trophy"></i> Ачивки</span><b id="menu-ach">0</b></div>
+          <div class="stat-row"><span><i class="fa-solid fa-clover"></i> Клики</span><b id="menu-clicks">0</b></div>
+          <div class="stat-row"><span><i class="fa-solid fa-comments"></i> Сообщений</span><b id="menu-msgs">0</b></div>
+          <label style="margin-top:10px;font-size:13px">Сменить аватар</label>
+          <div class="avatar-change" id="profile-avatars"></div>
+        </div>
+      </div>
+      <button class="icon-btn" onclick="logout()" title="Выйти">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs-nav">
+    <button class="tab active" data-tab="news"><i class="fa-solid fa-newspaper"></i> Новости</button>
+    <button class="tab" data-tab="schedule"><i class="fa-solid fa-calendar-days"></i> Расписание</button>
+    <button class="tab" data-tab="homework"><i class="fa-solid fa-book-open"></i> Домашка</button>
+    <button class="tab" data-tab="questions"><i class="fa-solid fa-circle-question"></i> Вопросы</button>
+    <button class="tab" data-tab="honor"><i class="fa-solid fa-award"></i> Доска почёта</button>
+    <button class="tab" data-tab="games"><i class="fa-solid fa-gamepad"></i> Игры</button>
+    <button class="tab" data-tab="fun"><i class="fa-solid fa-wand-magic-sparkles"></i> Развлечения</button>
+    <button class="tab" data-tab="chat"><i class="fa-solid fa-comments"></i> Чат <span class="tab-dot"></span></button>
+    <button class="tab" data-tab="pet"><i class="fa-solid fa-clover"></i> Питомец</button>
+    <button class="tab" data-tab="doodle"><i class="fa-solid fa-palette"></i> Дудлы</button>
+    <button class="tab" data-tab="achievements"><i class="fa-solid fa-trophy"></i> Ачивки</button>
+  </nav>
+
+  <main>
+    <section id="tab-news" class="tab-content active"></section>
+    <section id="tab-schedule" class="tab-content"></section>
+    <section id="tab-homework" class="tab-content"></section>
+    <section id="tab-questions" class="tab-content"></section>
+    <section id="tab-honor" class="tab-content"></section>
+    <section id="tab-games" class="tab-content"></section>
+    <section id="tab-fun" class="tab-content"></section>
+    <section id="tab-chat" class="tab-content"></section>
+    <section id="tab-pet" class="tab-content"></section>
+    <section id="tab-doodle" class="tab-content"></section>
+    <section id="tab-achievements" class="tab-content"></section>
+  </main>
+</div>
+
+<div id="sync-banner" class="sync-banner">
+  <i class="fa-solid fa-cloud"></i>
+  <span id="sync-banner-text">Синхронизация...</span>
+</div>
+
+<div id="pomodoro" class="pomodoro" style="display:none">
+  <div id="pomodoro-panel" class="pomodoro-panel">
+    <div class="pomo-time" id="pomo-time">25:00</div>
+    <div class="pomo-controls">
+      <button class="btn" onclick="pomoStart()" title="Старт"><i class="fa-solid fa-play"></i></button>
+      <button class="btn" onclick="pomoPause()" title="Пауза"><i class="fa-solid fa-pause"></i></button>
+      <button class="btn" onclick="pomoReset()" title="Сброс"><i class="fa-solid fa-rotate-left"></i></button>
+    </div>
+    <div style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px">
+      <i class="fa-solid fa-clock"></i> 25 мин • <i class="fa-solid fa-mug-hot"></i> 5 мин
+    </div>
+  </div>
+  <button class="pomodoro-btn" id="pomodoro-toggle"><i class="fa-solid fa-stopwatch"></i></button>
+</div>
+
+<button id="scroll-top" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+  <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+<div id="modal" class="modal">
+  <div class="modal-card">
+    <h3 id="modal-title"></h3>
+    <div id="modal-body"></div>
+    <div class="modal-actions" id="modal-actions">
+      <button class="btn" onclick="closeModal()">Отмена</button>
+      <button class="btn btn-primary" id="modal-save" style="width:auto;margin-top:0">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"><i class="fa-solid fa-circle-info"></i><span id="toast-text"></span></div>
+
+<!-- ============================================================
+     FIREBASE SDK (compat)
+     ============================================================ -->
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-database-compat.js"></script>
+
+<script>
+/* ============================================================
+   СОСТОЯНИЕ
+   ============================================================ */
+const LS = {
+  users: 'kb7_users', current: 'kb7_current', theme: 'kb7_theme',
+  news: 'kb7_news', schedule: 'kb7_schedule', homework: 'kb7_homework',
+  questions: 'kb7_questions', clicker: 'kb7_clicker',
+  reactions: 'kb7_reactions', poll: 'kb7_poll',
+  chat: 'kb7_chat', pet: 'kb7_pet', doodle: 'kb7_doodle',
+  honor: 'kb7_honor'
+};
+
+/* ============================================================
+   FIREBASE — ОБЛАЧНАЯ СИНХРОНИЗАЦИЯ
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyCqDNVwd0dGwNouVCwL5HwzsFzlLde5ty4",
+  authDomain: "portal-gordey.firebaseapp.com",
+  databaseURL: "https://portal-gordey-default-rtdb.firebaseio.com",
+  projectId: "portal-gordey",
+  storageBucket: "portal-gordey.firebasestorage.app",
+  messagingSenderId: "626354370312",
+  appId: "1:626354370312:web:b28ee25213290eb2ea5ebd"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const cloudRoot = db.ref('class7b');
+
+let cloudReady = false;
+let lastCloudUpdate = 0;
+let isSyncing = false;
+
+const DAYS = ['Понедельник','Вторник','Среда','Четверг','Пятница'];
+const AVATAR_ICONS = ['fa-user','fa-cat','fa-dog','fa-dragon','fa-ghost','fa-robot','fa-frog','fa-crow','fa-fish','fa-horse','fa-hippo','fa-otter','fa-spider','fa-dove','fa-feather','fa-fire'];
+const REACTION_TYPES = [
+  { id: 'like', icon: 'fa-heart', color: '#ef4444' },
+  { id: 'funny', icon: 'fa-face-laugh-squint', color: '#f59e0b' },
+  { id: 'wow', icon: 'fa-face-surprise', color: '#8b5cf6' },
+  { id: 'fire', icon: 'fa-fire', color: '#f97316' }
+];
+const MAX_LEVEL = 99;
+const ADMIN_XP = (() => { let t = 0; for (let i = 1; i < MAX_LEVEL; i++) t += 100 + (i - 1) * 50; return t + 5; })();
+
+const defaultNews = [
+  { id: 1, icon: 'fa-seedling', title: 'Добро пожаловать на портал 7Б!',
+    text: 'Это официальный сайт нашего класса. Здесь расписание, домашка, новости, вопросы и мини-игры!', date: '01.09' },
+  { id: 2, icon: 'fa-users', title: 'Родительское собрание',
+    text: 'В четверг в 18:00 в кабинете №24. Присутствие родителей обязательно!', date: '10.09' },
+  { id: 3, icon: 'fa-trophy', title: 'Олимпиада по математике',
+    text: 'В пятницу в 14:00 в актовом зале. Участвуют лучшие умы 7-х классов!', date: '12.09' },
+  { id: 4, icon: 'fa-cake-candles', title: 'День рождения класса!',
+    text: 'В конце месяца наш класс отмечает день рождения. Готовим поздравления!', date: '15.09' },
+  { id: 5, icon: 'fa-award', title: 'Доска почёта открыта!',
+    text: 'Появился новый раздел — Доска почёта. Владелец сайта может добавить туда лучших с фотографиями!', date: '20.09' }
+];
+
+const defaultSchedule = {
+  'Понедельник': ['Алгебра','Русский язык','Литература','История','Физкультура','Английский язык'],
+  'Вторник':     ['Геометрия','Биология','Русский язык','География','Английский язык','Технология'],
+  'Среда':       ['Физика','Химия','Алгебра','Литература','История','Физкультура'],
+  'Четверг':     ['Русский язык','Алгебра','Английский язык','Биология','География','ОБЖ'],
+  'Пятница':     ['Литература','История','Физика','Химия','Алгебра','Классный час']
+};
+
+const defaultHomework = {
+  'Понедельник': [
+    { subject: 'Алгебра', task: '§12, №45–48 (письменно)' },
+    { subject: 'Русский', task: 'Упр. 123, стр. 80' },
+    { subject: 'Литература', task: 'Читать стр. 95–110' },
+    { subject: 'История', task: 'Пересказ §7' }
+  ],
+  'Вторник': [
+    { subject: 'Геометрия', task: '№101, 103' },
+    { subject: 'Биология', task: '§8, вопросы 1–5' },
+    { subject: 'Русский', task: 'Упр. 130' }
+  ],
+  'Среда': [
+    { subject: 'Физика', task: '§15, упр. 12' },
+    { subject: 'Химия', task: '§5, задачи 1–3' },
+    { subject: 'Алгебра', task: '№50, 51, 52' }
+  ],
+  'Четверг': [
+    { subject: 'Русский', task: 'Сочинение-миниатюра' },
+    { subject: 'Английский', task: 'Упр. 5, стр. 42' }
+  ],
+  'Пятница': [
+    { subject: 'Литература', task: 'Выучить стихотворение' },
+    { subject: 'История', task: 'Подготовить доклад' }
+  ]
+};
+
+const defaultPoll = {
+  question: 'Куда пойдём на экскурсию?',
+  options: [
+    { id: 'o1', text: 'Планетарий', votes: [] },
+    { id: 'o2', text: 'Музей космонавтики', votes: [] },
+    { id: 'o3', text: 'Зоопарк', votes: [] },
+    { id: 'o4', text: 'Океанариум', votes: [] }
+  ]
+};
+
+const jokes = [
+  'Учитель: — Кто не сделал домашку? Класс: — Мы все очень дружные!',
+  '— Вовочка, почему ты опоздал? — Я хотел прийти пораньше, но не получилось...',
+  'Почему дневник называют дневником? Потому что его ведут днём!',
+  'Учитель: — Что такое лень? Ученик: — Это когда не хочется думать...',
+  '— Почему ты не выучил стих? — Я его выучил, но забыл, что выучил!',
+  'Школьная столовая — это такое место, где "очень вкусно" зависит от голода.',
+  'На контрольной: "Я не знаю, но зато я знаю, что я не знаю" — половина успеха!',
+  'Урок физкультуры — единственный урок, где не ругают за бег!',
+  'Домашка — как wi-fi: чем больше, тем медленнее идёт.',
+  'Единственный предмет, который я знаю отлично — перемена!',
+  'Учитель: — Что такое существительное? Вовочка: — То, что всегда есть!'
+];
+
+const facts = [
+  'Мозг работает на 20% от энергии тела, хотя весит 2%.',
+  'Пчёлы узнают человеческие лица лучше некоторых людей!',
+  'Осьминоги имеют три сердца и голубую кровь.',
+  'Самый долгий урок в мире длился 54 часа!',
+  'Клевер с четырьмя листьями — 1 на 10000.',
+  'Бананы — это ягоды, а малина — нет.',
+  'Кошки мурлычут на частоте, заживляющей кости.',
+  'Пингвины делают предложение подруге, даря камень.',
+  'Шоколад был изобретён как лекарство!',
+  'Облака весят около 500 тонн. Магия!'
+];
+
+const fortunes = [
+  'Сегодня тебе повезёт! Особенно на контрольной.',
+  'Скоро получишь пятерку!',
+  'Ждёт приятная новость после уроков!',
+  'Не забудь пообедать!',
+  'Твой лучший день — четверг.',
+  'Звёзды говорят: сделай домашку!',
+  'Встретишь сегодня что-то очень смешное.',
+  'Внимание: тебя ждёт неожиданная пятёрка!',
+  'Не спорь с математикой — она права.',
+  'Хороший день, чтобы выучить что-то новое!'
+];
+
+const predictions = [
+  'Скоро контрольная. Готовься! 😈',
+  'Тебя похвалит учитель.',
+  'В столовой будет что-то вкусное.',
+  'Ты найдёшь потерянную ручку.',
+  'Твой одноклассник расскажет анекдот.',
+  'На перемене будет весело!',
+  'Придёт сообщение от друга.',
+  'Ты выиграешь в игру на этом сайте!',
+  'Домашка окажется не такой сложной.',
+  'Улыбнись — и день станет лучше!'
+];
+
+const ACHIEVEMENTS = [
+  { id: 'first_login', name: 'Новичок', desc: 'Первый вход на сайт', icon: 'fa-door-open' },
+  { id: 'chat_10', name: 'Болтун', desc: '10 сообщений в чате', icon: 'fa-comments' },
+  { id: 'chat_50', name: 'Оратор', desc: '50 сообщений в чате', icon: 'fa-bullhorn' },
+  { id: 'clicks_100', name: 'Кликер-мастер', desc: '100 кликов в кликере', icon: 'fa-clover' },
+  { id: 'clicks_1000', name: 'Легенда клика', desc: '1000 кликов!', icon: 'fa-crown' },
+  { id: 'pet_fed', name: 'Заботливый', desc: 'Покормил питомца 5 раз', icon: 'fa-bowl-food' },
+  { id: 'pet_love', name: 'Друг клевера', desc: 'Погладил питомца 10 раз', icon: 'fa-hand-holding-heart' },
+  { id: 'artist', name: 'Художник', desc: 'Нарисовал что-то в дудлах', icon: 'fa-palette' },
+  { id: 'fun_clicked', name: 'Весельчак', desc: 'Открыл 5 развлечений', icon: 'fa-face-laugh-beam' },
+  { id: 'reaction_giver', name: 'Реактор', desc: 'Поставил 10 реакций', icon: 'fa-thumbs-up' },
+  { id: 'poll_voter', name: 'Голосующий', desc: 'Проголосовал в опросе', icon: 'fa-check-to-slot' },
+  { id: 'disco', name: 'Танцор диско', desc: 'Включил дискотеку', icon: 'fa-compact-disc' },
+  { id: 'konami', name: 'Читер', desc: 'Ввёл Konami-код', icon: 'fa-gamepad' },
+  { id: 'secret_star', name: 'Звездочёт', desc: 'Поймал падающую звезду', icon: 'fa-star' },
+  { id: 'level_5', name: 'Пятёрочник', desc: 'Достиг 5 уровня', icon: 'fa-ranking-star' },
+  { id: 'level_10', name: 'Отличник', desc: 'Достиг 10 уровня', icon: 'fa-graduation-cap' },
+  { id: 'owner_ach', name: 'Владелец сайта', desc: 'Особая награда владельцу', icon: 'fa-crown' },
+  { id: 'honor_member', name: 'Почётный', desc: 'Попал на доску почёта', icon: 'fa-award' }
+];
+
+let state = {
+  users: JSON.parse(localStorage.getItem(LS.users) || '[]'),
+  current: localStorage.getItem(LS.current) || null,
+  news: JSON.parse(localStorage.getItem(LS.news) || 'null') || defaultNews,
+  schedule: JSON.parse(localStorage.getItem(LS.schedule) || 'null') || defaultSchedule,
+  homework: JSON.parse(localStorage.getItem(LS.homework) || 'null') || defaultHomework,
+  questions: JSON.parse(localStorage.getItem(LS.questions) || '[]'),
+  reactions: JSON.parse(localStorage.getItem(LS.reactions) || '{}'),
+  poll: JSON.parse(localStorage.getItem(LS.poll) || 'null') || defaultPoll,
+  chat: JSON.parse(localStorage.getItem(LS.chat) || '[]'),
+  pet: JSON.parse(localStorage.getItem(LS.pet) || 'null') || { name: 'Клеверок', hunger: 70, mood: 80, lastUpdate: Date.now(), feedCount: 0, patCount: 0 },
+  doodle: localStorage.getItem(LS.doodle) || null,
+  honor: JSON.parse(localStorage.getItem(LS.honor) || '[]'),
+  theme: localStorage.getItem(LS.theme) || 'light',
+  regAvatar: 'fa-user'
+};
+
+// Гарантируем админа
+let adminUser = state.users.find(u => u.nick === 'Квасыч');
+if (!adminUser) {
+  adminUser = {
+    name: 'Гордей', nick: 'Квасыч', password: '94149414',
+    isAdmin: true, avatar: 'fa-crown',
+    xp: ADMIN_XP, achievements: [], stats: { clicks: 0, msgs: 0, reactions: 0, funOpens: 0 }
+  };
+  adminUser.achievements = ACHIEVEMENTS.map(a => a.id);
+  state.users.push(adminUser);
+  saveAllLocal();
+} else {
+  adminUser.isAdmin = true;
+  adminUser.xp = ADMIN_XP;
+  if (!adminUser.avatar || adminUser.avatar === 'fa-user') adminUser.avatar = 'fa-crown';
+  adminUser.achievements = ACHIEVEMENTS.map(a => a.id);
+  if (!adminUser.stats) adminUser.stats = { clicks: 0, msgs: 0, reactions: 0, funOpens: 0 };
+  saveAllLocal();
+}
+
+state.users.forEach(u => {
+  if (!u.avatar) u.avatar = 'fa-user';
+  if (u.xp == null) u.xp = 0;
+  if (!u.achievements) u.achievements = [];
+  if (!u.stats) u.stats = { clicks: 0, msgs: 0, reactions: 0, funOpens: 0 };
+  if (u.isAdmin) {
+    u.xp = ADMIN_XP;
+    u.achievements = ACHIEVEMENTS.map(a => a.id);
+  }
+});
+
+/* ============================================================
+   СОХРАНЕНИЕ (локал + облако)
+   ============================================================ */
+function saveAllLocal() {
+  localStorage.setItem(LS.users, JSON.stringify(state.users));
+  localStorage.setItem(LS.news, JSON.stringify(state.news));
+  localStorage.setItem(LS.schedule, JSON.stringify(state.schedule));
+  localStorage.setItem(LS.homework, JSON.stringify(state.homework));
+  localStorage.setItem(LS.questions, JSON.stringify(state.questions));
+  localStorage.setItem(LS.reactions, JSON.stringify(state.reactions));
+  localStorage.setItem(LS.poll, JSON.stringify(state.poll));
+  localStorage.setItem(LS.chat, JSON.stringify(state.chat));
+  localStorage.setItem(LS.pet, JSON.stringify(state.pet));
+  localStorage.setItem(LS.honor, JSON.stringify(state.honor));
+  if (state.doodle) localStorage.setItem(LS.doodle, state.doodle);
+  else localStorage.removeItem(LS.doodle);
+  if (state.current) localStorage.setItem(LS.current, state.current);
+  else localStorage.removeItem(LS.current);
+}
+
+function saveAll() {
+  // Сохраняем локально сразу
+  saveAllLocal();
+
+  // Отправляем в облако
+  if (!cloudReady) return;
+  const payload = {
+    users: state.users,
+    news: state.news,
+    schedule: state.schedule,
+    homework: state.homework,
+    questions: state.questions,
+    reactions: state.reactions,
+    poll: state.poll,
+    chat: state.chat,
+    pet: state.pet,
+    honor: state.honor,
+    doodle: state.doodle || null,
+    meta: { updatedAt: Date.now(), updatedBy: state.current }
+  };
+  isSyncing = true;
+  updateSyncStatus();
+  cloudRoot.set(payload).then(() => {
+    isSyncing = false;
+    lastCloudUpdate = Date.now();
+    updateSyncStatus();
+  }).catch(err => {
+    isSyncing = false;
+    console.error('Sync error:', err);
+    updateSyncStatus('error');
+  });
+}
+
+function saveUser() {
+  localStorage.setItem(LS.users, JSON.stringify(state.users));
+  if (!cloudReady) return;
+  cloudRoot.child('users').set(state.users).catch(err => console.error(err));
+}
+
+/* ============================================================
+   CLOUD SYNC INIT
+   ============================================================ */
+function setSyncBanner(cls, icon, text, autohide) {
+  const el = document.getElementById('sync-banner');
+  const ic = el.querySelector('i');
+  ic.className = 'fa-solid ' + icon;
+  document.getElementById('sync-banner-text').textContent = text;
+  el.className = 'sync-banner show ' + (cls || '');
+  clearTimeout(setSyncBanner._t);
+  if (autohide) {
+    setSyncBanner._t = setTimeout(() => el.classList.remove('show'), autohide);
+  }
+}
+
+function updateSyncStatus(errorType) {
+  const btn = document.getElementById('sync-btn');
+  if (!btn) return;
+  if (errorType === 'error') {
+    btn.className = 'icon-btn offline';
+    btn.querySelector('i').className = 'fa-solid fa-cloud-exclamation';
+    return;
+  }
+  if (isSyncing) {
+    btn.className = 'icon-btn syncing';
+    btn.querySelector('i').className = 'fa-solid fa-rotate';
+  } else {
+    btn.className = 'icon-btn online';
+    btn.querySelector('i').className = 'fa-solid fa-cloud';
+  }
+}
+
+function initCloudSync() {
+  updateSyncStatus();
+  cloudRoot.once('value').then(snap => {
+    const data = snap.val();
+
+    if (!data || !data.users || data.users.length === 0) {
+      // Первый запуск — грузим локальные данные в облако
+      cloudReady = true;
+      saveAll();
+      setSyncBanner('online', 'fa-cloud-arrow-up', 'Данные загружены в облако', 2500);
+    } else {
+      // Данные уже есть — берём их из облака
+      applyCloudData(data, false);
+      cloudReady = true;
+      updateSyncStatus();
+      setSyncBanner('online', 'fa-circle-check', 'Подключено к облаку', 2000);
+    }
+
+    // Подписка на все последующие изменения
+    cloudRoot.on('value', snap2 => {
+      const d = snap2.val();
+      if (!d) return;
+      // Игнорируем свои же апдейты (в течение 1 сек после отправки)
+      if (Date.now() - lastCloudUpdate < 800) return;
+      applyCloudData(d, true);
+    });
+  }).catch(err => {
+    console.error('Firebase init error:', err);
+    cloudReady = false;
+    updateSyncStatus('error');
+    setSyncBanner('offline', 'fa-triangle-exclamation', 'Нет связи. Работаем офлайн.', 4000);
+  });
+
+  // Индикатор онлайн/офлайн интернета
+  firebase.database().ref('.info/connected').on('value', snap => {
+    const connected = snap.val();
+    if (connected) {
+      cloudReady = true;
+      updateSyncStatus();
+    } else {
+      cloudReady = false;
+      updateSyncStatus('error');
+    }
+  });
+}
+
+function applyCloudData(data, isRemoteUpdate) {
+  if (data.users) state.users = data.users;
+  if (data.news) state.news = data.news;
+  if (data.schedule) state.schedule = data.schedule;
+  if (data.homework) state.homework = data.homework;
+  if (data.questions) state.questions = data.questions;
+  if (data.reactions) state.reactions = data.reactions;
+  if (data.poll) state.poll = data.poll;
+  if (data.chat) state.chat = data.chat;
+  if (data.pet) state.pet = data.pet;
+  if (data.honor) state.honor = data.honor;
+  if (data.doodle !== undefined) state.doodle = data.doodle;
+
+  saveAllLocal();
+
+  const appVisible = document.getElementById('app') && document.getElementById('app').style.display !== 'none';
+  if (!appVisible) return;
+
+  // Сохраняем позицию в чате
+  const chatInput = document.getElementById('chat-input');
+  const chatValue = chatInput ? chatInput.value : '';
+  const chatFocused = chatInput && document.activeElement === chatInput;
+  const chatBox = document.getElementById('chat-messages');
+  const chatAtBottom = chatBox ? (chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 60) : true;
+  const chatScroll = chatBox ? chatBox.scrollTop : 0;
+
+  // Перерисовываем всё
+  renderAll();
+  updateHeader();
+
+  // Восстанавливаем чат
+  const newChatInput = document.getElementById('chat-input');
+  if (newChatInput) {
+    if (chatFocused) {
+      newChatInput.value = chatValue;
+      newChatInput.focus();
+      try { newChatInput.setSelectionRange(chatValue.length, chatValue.length); } catch(e){}
+    }
+  }
+  const newChatBox = document.getElementById('chat-messages');
+  if (newChatBox) {
+    if (chatAtBottom) newChatBox.scrollTop = newChatBox.scrollHeight;
+    else newChatBox.scrollTop = chatScroll;
+  }
+
+  // Показываем индикатор новых сообщений, если вкладка чата не активна
+  if (isRemoteUpdate && data.chat && data.chat.length > 0) {
+    const activeTab = document.querySelector('.tab.active');
+    if (!activeTab || activeTab.dataset.tab !== 'chat') {
+      const chatTab = document.querySelector('[data-tab="chat"]');
+      if (chatTab) chatTab.classList.add('has-new');
+    }
+  }
+
+  if (isRemoteUpdate) {
+    setSyncBanner('online', 'fa-cloud-arrow-down', 'Обновлено', 1500);
+  }
+}
+
+function showSyncInfo() {
+  openModal('<i class="fa-solid fa-cloud"></i> Синхронизация', `
+    <div style="padding:14px;background:var(--bg-2);border-radius:10px;font-size:14px;line-height:1.6;border-left:3px solid var(--primary);margin-bottom:16px">
+      <i class="fa-solid fa-circle-info" style="color:var(--primary)"></i>
+      Все данные автоматически сохраняются в облако и появляются у всех
+      на всех устройствах в реальном времени.
+    </div>
+    <div style="font-size:14px;line-height:2">
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--border)">
+        <span><i class="fa-solid fa-wifi" style="color:var(--primary)"></i> Статус:</span>
+        <b style="color:${cloudReady ? 'var(--success)' : 'var(--danger)'}">${cloudReady ? 'Онлайн' : 'Офлайн'}</b>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--border)">
+        <span><i class="fa-solid fa-users"></i> Пользователей:</span>
+        <b>${state.users.length}</b>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--border)">
+        <span><i class="fa-solid fa-newspaper"></i> Новостей:</span>
+        <b>${state.news.length}</b>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--border)">
+        <span><i class="fa-solid fa-comments"></i> Сообщений в чате:</span>
+        <b>${state.chat.length}</b>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0">
+        <span><i class="fa-solid fa-award"></i> На доске почёта:</span>
+        <b>${state.honor.length}</b>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="margin:20px 0 0" onclick="forceSync()">
+      <i class="fa-solid fa-rotate"></i> Обновить сейчас
+    </button>
+  `, null, { hideSave: true });
+}
+
+function forceSync() {
+  if (!cloudReady) {
+    toast('Нет связи с облаком', 'fa-triangle-exclamation');
+    return;
+  }
+  setSyncBanner('syncing', 'fa-rotate', 'Синхронизация...');
+  cloudRoot.once('value').then(snap => {
+    const data = snap.val();
+    if (data) applyCloudData(data, true);
+    setSyncBanner('online', 'fa-circle-check', 'Готово', 1500);
+    toast('Данные обновлены', 'fa-circle-check');
+  }).catch(() => {
+    toast('Ошибка синхронизации', 'fa-triangle-exclamation');
+  });
+}
+
+/* ============================================================
+   XP & УРОВНИ
+   ============================================================ */
+function getLevel(xp) {
+  let lvl = 1, need = 100;
+  let rest = xp;
+  while (rest >= need && lvl < MAX_LEVEL) { rest -= need; lvl++; need = 100 + (lvl - 1) * 50; }
+  if (lvl >= MAX_LEVEL) return { level: MAX_LEVEL, current: 0, need: 1, max: true };
+  return { level: lvl, current: rest, need };
+}
+function addXP(amount) {
+  const u = currentUser();
+  if (!u) return;
+  if (u.isAdmin) { u.xp = ADMIN_XP; saveUser(); updateHeader(); return; }
+  const before = getLevel(u.xp).level;
+  u.xp += amount;
+  const after = getLevel(u.xp).level;
+  saveUser(); updateHeader();
+  if (after > before) {
+    toast(`Уровень ${after}! Поздравляю!`, 'fa-arrow-up');
+    confetti();
+  }
+  checkAchievements();
+}
+function updateHeader() {
+  const u = currentUser();
+  if (!u) return;
+  const lv = getLevel(u.xp);
+  document.getElementById('user-name').textContent = u.name;
+  const av = document.getElementById('user-avatar');
+  av.innerHTML = `<i class="fa-solid ${u.avatar || 'fa-user'}"></i>`;
+  av.className = 'profile-avatar' + (u.isAdmin ? ' owner' : '');
+  document.getElementById('user-level').innerHTML = u.isAdmin
+    ? '<i class="fa-solid fa-crown" style="color:var(--gold-2)"></i> Владелец'
+    : 'Ур. ' + lv.level;
+  document.getElementById('user-xp-bar').style.width = (lv.current / lv.need * 100) + '%';
+  document.getElementById('menu-level').textContent = u.isAdmin ? 'MAX' : lv.level;
+  document.getElementById('menu-xp').textContent = u.isAdmin ? '∞ / ∞' : (lv.current + ' / ' + lv.need);
+  document.getElementById('menu-ach').textContent = u.achievements.length + '/' + ACHIEVEMENTS.length;
+  document.getElementById('menu-clicks').textContent = u.stats.clicks || 0;
+  document.getElementById('menu-msgs').textContent = u.stats.msgs || 0;
+}
+
+/* ============================================================
+   АЧИВКИ
+   ============================================================ */
+function unlockAchievement(id) {
+  const u = currentUser();
+  if (!u || u.achievements.includes(id)) return;
+  u.achievements.push(id);
+  saveUser();
+  const ach = ACHIEVEMENTS.find(a => a.id === id);
+  if (ach) showAchPopup(ach);
+  updateHeader();
+}
+function showAchPopup(ach) {
+  const el = document.createElement('div');
+  el.className = 'ach-popup';
+  el.innerHTML = `
+    <div class="popup-icon"><i class="fa-solid ${ach.icon}"></i></div>
+    <div>
+      <div class="popup-title"><i class="fa-solid fa-trophy"></i> Достижение!</div>
+      <div class="popup-name">${ach.name}</div>
+    </div>
+  `;
+  document.body.appendChild(el);
+  setTimeout(() => el.classList.add('out'), 4000);
+  setTimeout(() => el.remove(), 4500);
+}
+function checkAchievements() {
+  const u = currentUser();
+  if (!u || u.isAdmin) return;
+  const lv = getLevel(u.xp).level;
+  if (lv >= 5) unlockAchievement('level_5');
+  if (lv >= 10) unlockAchievement('level_10');
+  if ((u.stats.clicks || 0) >= 100) unlockAchievement('clicks_100');
+  if ((u.stats.clicks || 0) >= 1000) unlockAchievement('clicks_1000');
+  if ((u.stats.msgs || 0) >= 10) unlockAchievement('chat_10');
+  if ((u.stats.msgs || 0) >= 50) unlockAchievement('chat_50');
+  if ((u.stats.reactions || 0) >= 10) unlockAchievement('reaction_giver');
+  if ((u.stats.funOpens || 0) >= 5) unlockAchievement('fun_clicked');
+  if (state.pet.feedCount >= 5) unlockAchievement('pet_fed');
+  if (state.pet.patCount >= 10) unlockAchievement('pet_love');
+}
+
+/* ============================================================
+   IMAGE RESIZE
+   ============================================================ */
+function resizeImage(file, maxSize = 320) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let w = img.width, h = img.height;
+        if (w > h) { if (w > maxSize) { h = Math.round(h * maxSize / w); w = maxSize; } }
+        else { if (h > maxSize) { w = Math.round(w * maxSize / h); h = maxSize; } }
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.78));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderNickWithBadges(nick, opts = {}) {
+  const u = userByNick(nick);
+  if (!u) return escapeHtml(nick);
+  const lv = getLevel(u.xp);
+  const prefix = u.isAdmin
+    ? '<span class="owner-prefix"><i class="fa-solid fa-crown"></i> Владелец</span>'
+    : '';
+  const level = u.isAdmin
+    ? '<span class="msg-level"><i class="fa-solid fa-infinity"></i> MAX</span>'
+    : `<span class="msg-level"><i class="fa-solid fa-star"></i> ${lv.level}</span>`;
+  const showLevel = opts.showLevel !== false;
+  return `${prefix}<span>${escapeHtml(nick)}</span>${showLevel ? level : ''}`;
+}
+
+function currentUser() { return state.users.find(u => u.nick === state.current); }
+function isAdmin() { const u = currentUser(); return u && u.isAdmin; }
+function userByNick(nick) { return state.users.find(u => u.nick === nick); }
+
+/* ============================================================
+   ТЕМА
+   ============================================================ */
+function applyTheme() {
+  document.body.classList.toggle('dark', state.theme === 'dark');
+  const btn = document.getElementById('theme-btn');
+  if (btn) btn.innerHTML = state.theme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+}
+function toggleTheme() {
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem(LS.theme, state.theme);
+  applyTheme();
+  toast(state.theme === 'dark' ? 'Тёмная тема' : 'Светлая тема', 'fa-circle-half-stroke');
+}
+applyTheme();
+
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = h > 0 ? (window.scrollY / h) * 100 : 0;
+  document.getElementById('scroll-progress').style.width = pct + '%';
+  const st = document.getElementById('scroll-top');
+  if (window.scrollY > 300) st.classList.add('show');
+  else st.classList.remove('show');
+});
+
+/* ============================================================
+   ЧАСТИЦЫ
+   ============================================================ */
+function initParticles() {
+  const box = document.getElementById('particles');
+  const icons = ['fa-clover','fa-leaf','fa-star','fa-sparkles','fa-seedling','fa-heart'];
+  setInterval(() => {
+    if (document.hidden) return;
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.innerHTML = `<i class="fa-solid ${icons[Math.floor(Math.random()*icons.length)]}"></i>`;
+    p.style.left = Math.random() * 100 + '%';
+    p.style.fontSize = (12 + Math.random() * 18) + 'px';
+    const dur = 12 + Math.random() * 10;
+    p.style.animationDuration = dur + 's';
+    p.style.opacity = (0.15 + Math.random() * 0.3).toFixed(2);
+    box.appendChild(p);
+    setTimeout(() => p.remove(), dur * 1000);
+  }, 2200);
+}
+initParticles();
+
+/* ============================================================
+   АВАТАР-ПИКЕР
+   ============================================================ */
+function buildAvatarPickers() {
+  const reg = document.getElementById('reg-avatars');
+  if (reg) {
+    reg.innerHTML = '';
+    AVATAR_ICONS.forEach(ic => {
+      const d = document.createElement('div');
+      d.className = 'avatar-opt' + (state.regAvatar === ic ? ' selected' : '');
+      d.innerHTML = `<i class="fa-solid ${ic}"></i>`;
+      d.onclick = () => { state.regAvatar = ic; buildAvatarPickers(); };
+      reg.appendChild(d);
+    });
+  }
+  const prof = document.getElementById('profile-avatars');
+  if (prof) {
+    prof.innerHTML = '';
+    const u = currentUser();
+    AVATAR_ICONS.forEach(ic => {
+      const d = document.createElement('div');
+      d.className = 'avatar-opt' + (u && u.avatar === ic ? ' selected' : '');
+      d.innerHTML = `<i class="fa-solid ${ic}"></i>`;
+      d.onclick = () => {
+        if (!u) return;
+        u.avatar = ic;
+        saveUser(); updateHeader(); buildAvatarPickers();
+        toast('Аватар изменён!', 'fa-circle-check');
+      };
+      prof.appendChild(d);
+    });
+  }
+}
+buildAvatarPickers();
+
+/* ============================================================
+   АВТОРИЗАЦИЯ
+   ============================================================ */
+function showLogin() {
+  document.getElementById('auth-form-register').style.display = 'none';
+  document.getElementById('auth-form-login').style.display = 'block';
+}
+function showRegister() {
+  document.getElementById('auth-form-register').style.display = 'block';
+  document.getElementById('auth-form-login').style.display = 'none';
+}
+function register() {
+  const name = document.getElementById('reg-name').value.trim();
+  const nick = document.getElementById('reg-nick').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  const err = document.getElementById('reg-error');
+  err.textContent = '';
+  if (!name) return err.textContent = 'Введите имя';
+  if (name.length < 2) return err.textContent = 'Имя слишком короткое';
+  if (!nick) return err.textContent = 'Введите ник';
+  if (nick.length < 3) return err.textContent = 'Ник минимум 3 символа';
+  if (!pass) return err.textContent = 'Придумайте пароль';
+  if (pass.length < 4) return err.textContent = 'Пароль минимум 4 символа';
+  if (state.users.find(u => u.nick.toLowerCase() === nick.toLowerCase()))
+    return err.textContent = 'Этот ник уже занят';
+
+  // Проверка свежести данных из облака (на всякий случай)
+  const finish = () => {
+    if (state.users.find(u => u.nick.toLowerCase() === nick.toLowerCase()))
+      return err.textContent = 'Этот ник только что заняли. Попробуй другой';
+    state.users.push({
+      name, nick, password: pass, isAdmin: false,
+      avatar: state.regAvatar, xp: 0, achievements: [],
+      stats: { clicks: 0, msgs: 0, reactions: 0, funOpens: 0 }
+    });
+    state.current = nick;
+    saveAll();
+    toast('Аккаунт создан! Привет, ' + name + '!', 'fa-circle-check');
+    enterApp();
+    setTimeout(() => unlockAchievement('first_login'), 800);
+  };
+
+  if (cloudReady) {
+    cloudRoot.child('users').once('value').then(snap => {
+      const users = snap.val() || [];
+      if (users.find(u => u.nick.toLowerCase() === nick.toLowerCase())) {
+        return err.textContent = 'Этот ник уже занят';
+      }
+      finish();
+    }).catch(finish);
+  } else {
+    finish();
+  }
+}
+function login() {
+  const nick = document.getElementById('log-nick').value.trim();
+  const pass = document.getElementById('log-pass').value;
+  const err = document.getElementById('log-error');
+  err.textContent = '';
+
+  const attempt = (users) => {
+    const user = users.find(u => u.nick.toLowerCase() === nick.toLowerCase());
+    if (!user) return err.textContent = 'Пользователь не найден';
+    if (user.password !== pass) return err.textContent = 'Неверный пароль';
+    state.users = users;
+    state.current = user.nick;
+    saveAllLocal();
+    toast('С возвращением, ' + user.name + '!', 'fa-hand-wave');
+    enterApp();
+  };
+
+  if (cloudReady) {
+    cloudRoot.child('users').once('value').then(snap => {
+      const users = snap.val();
+      if (users && users.length) attempt(users);
+      else attempt(state.users);
+    }).catch(() => attempt(state.users));
+  } else {
+    attempt(state.users);
+  }
+}
+function logout() {
+  state.current = null;
+  saveAllLocal();
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('pomodoro').style.display = 'none';
+  document.getElementById('auth').style.display = 'flex';
+  document.getElementById('log-nick').value = '';
+  document.getElementById('log-pass').value = '';
+  document.getElementById('log-error').textContent = '';
+}
+function enterApp() {
+  document.getElementById('auth').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('pomodoro').style.display = 'block';
+  updateHeader();
+  buildAvatarPickers();
+  renderAll();
+  const u = currentUser();
+  if (u && !u.isAdmin && !u.achievements.includes('first_login')) {
+    setTimeout(() => unlockAchievement('first_login'), 1200);
+  }
+  setTimeout(checkAchievements, 500);
+}
+
+function toggleProfileMenu(e) {
+  if (e) e.stopPropagation();
+  document.getElementById('profile-menu').classList.toggle('open');
+}
+document.addEventListener('click', () => {
+  document.getElementById('profile-menu').classList.remove('open');
+});
+
+/* ============================================================
+   НАВИГАЦИЯ
+   ============================================================ */
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  const el = document.getElementById('tab-' + name);
+  if (el) el.classList.add('active');
+  if (name === 'chat') {
+    document.querySelector('[data-tab="chat"]').classList.remove('has-new');
+    setTimeout(scrollChatBottom, 100);
+  }
+  if (name === 'doodle') initDoodle();
+  if (name === 'pet') renderPet();
+  if (name === 'achievements') renderAchievements();
+  if (name === 'honor') renderHonor();
+}
+function openChatTab() { switchTab('chat'); }
+
+/* ============================================================
+   РЕНДЕР
+   ============================================================ */
+function renderAll() {
+  renderNews();
+  renderSchedule();
+  renderHomework();
+  renderQuestions();
+  renderHonor();
+  renderGames();
+  renderFun();
+  renderChat();
+  renderPet();
+  renderAchievements();
+}
+
+/* --- НОВОСТИ --- */
+function renderNews() {
+  const el = document.getElementById('tab-news');
+  let html = `
+    <div class="widgets-row">
+      <div class="widget quote-widget">
+        <h3><i class="fa-solid fa-quote-left"></i> Цитата дня</h3>
+        <div class="quote-text" id="quote-of-day">Загрузка...</div>
+        <div class="quote-author" id="quote-author">—</div>
+      </div>
+      <div class="widget">
+        <h3><i class="fa-solid fa-check-to-slot"></i> Опрос дня</h3>
+        <div id="poll-widget"></div>
+      </div>
+    </div>
+    <div class="section-head">
+      <h2><i class="fa-solid fa-newspaper"></i> Новости школы и класса</h2>
+      ${isAdmin() ? `<button class="btn btn-primary" style="width:auto;margin:0" onclick="addNews()"><i class="fa-solid fa-plus"></i> Добавить</button>` : ''}
+    </div>
+    <div class="grid">
+  `;
+  if (state.news.length === 0) {
+    html += `<div class="empty"><i class="fa-solid fa-inbox"></i>Пока новостей нет</div>`;
+  } else {
+    state.news.forEach(n => {
+      html += `
+        <div class="card">
+          <div class="card-head">
+            <div class="card-icon"><i class="fa-solid ${n.icon || 'fa-bullhorn'}"></i></div>
+            <div>
+              <h3>${escapeHtml(n.title)}</h3>
+              <div class="date"><i class="fa-regular fa-clock"></i> ${escapeHtml(n.date || '')}</div>
+            </div>
+          </div>
+          <p>${escapeHtml(n.text).replace(/\n/g,'<br>')}</p>
+          ${renderReactions(n.id)}
+          ${isAdmin() ? `<div class="card-actions">
+            <button class="mini-btn danger" onclick="deleteNews(${n.id})"><i class="fa-solid fa-trash"></i> Удалить</button>
+          </div>` : ''}
+        </div>
+      `;
+    });
+  }
+  html += `</div>`;
+  el.innerHTML = html;
+  renderQuote();
+  renderPoll();
+}
+function renderReactions(newsId) {
+  const r = state.reactions[newsId] || {};
+  const me = state.current;
+  let html = '<div class="reactions">';
+  REACTION_TYPES.forEach(rt => {
+    const users = r[rt.id] || [];
+    const count = users.length;
+    const active = users.includes(me);
+    html += `
+      <button class="react-btn ${active ? 'active' : ''}" onclick="toggleReaction(${newsId}, '${rt.id}')" title="${count}">
+        <i class="fa-solid ${rt.icon}"></i>
+        <span>${count || ''}</span>
+      </button>
+    `;
+  });
+  html += '</div>';
+  return html;
+}
+function toggleReaction(newsId, type) {
+  const me = state.current;
+  if (!state.reactions[newsId]) state.reactions[newsId] = {};
+  if (!state.reactions[newsId][type]) state.reactions[newsId][type] = [];
+  const arr = state.reactions[newsId][type];
+  const i = arr.indexOf(me);
+  if (i >= 0) arr.splice(i, 1);
+  else {
+    arr.push(me);
+    const u = currentUser();
+    if (u) { u.stats.reactions = (u.stats.reactions || 0) + 1; saveUser(); }
+    addXP(2);
+    checkAchievements();
+  }
+  saveAll();
+  renderNews();
+}
+function renderQuote() {
+  const q = document.getElementById('quote-of-day');
+  const a = document.getElementById('quote-author');
+  if (!q) return;
+  const day = new Date().getDate();
+  const idx = day % fortunes.length;
+  q.textContent = '«' + fortunes[idx] + '»';
+  a.textContent = '— Клевер дня';
+}
+function renderPoll() {
+  const el = document.getElementById('poll-widget');
+  if (!el) return;
+  const me = state.current;
+  const total = state.poll.options.reduce((s, o) => s + o.votes.length, 0);
+  const voted = state.poll.options.some(o => o.votes.includes(me));
+  let html = `<div style="font-weight:700;margin-bottom:10px;font-size:14px;font-family:var(--font-head)">${escapeHtml(state.poll.question)}</div>`;
+  state.poll.options.forEach(o => {
+    const count = o.votes.length;
+    const pct = total > 0 ? (count / total * 100) : 0;
+    const isVoted = o.votes.includes(me);
+    html += `
+      <div class="poll-option ${voted ? 'voted' : ''} ${isVoted ? 'voted' : ''}" onclick="votePoll('${o.id}')">
+        ${voted ? `<div class="poll-fill" style="width:${pct}%"></div>` : ''}
+        <span class="poll-label">${isVoted ? '<i class="fa-solid fa-check"></i> ' : ''}${escapeHtml(o.text)}</span>
+        ${voted ? `<span class="poll-count">${count} • ${Math.round(pct)}%</span>` : ''}
+      </div>
+    `;
+  });
+  if (voted) html += `<div style="text-align:center;font-size:12px;color:var(--muted);margin-top:8px">Всего голосов: ${total}</div>`;
+  el.innerHTML = html;
+}
+function votePoll(optId) {
+  const me = state.current;
+  const opt = state.poll.options.find(o => o.id === optId);
+  if (!opt || opt.votes.includes(me)) return;
+  state.poll.options.forEach(o => {
+    const i = o.votes.indexOf(me);
+    if (i >= 0) o.votes.splice(i, 1);
+  });
+  opt.votes.push(me);
+  saveAll(); renderPoll();
+  addXP(5);
+  unlockAchievement('poll_voter');
+  toast('Голос учтён!', 'fa-check');
+}
+function addNews() {
+  openModal('<i class="fa-solid fa-plus"></i> Новая новость', `
+    <label>Заголовок</label>
+    <input id="modal-title-input" placeholder="О чём новость?">
+    <label>Текст</label>
+    <textarea id="modal-text-input" class="textarea" style="min-height:120px"></textarea>
+    <label>Дата</label>
+    <input id="modal-date-input" placeholder="20.10">
+  `, () => {
+    const t = document.getElementById('modal-title-input').value.trim();
+    const x = document.getElementById('modal-text-input').value.trim();
+    const d = document.getElementById('modal-date-input').value.trim() || formatDate(new Date());
+    if (!t || !x) { toast('Заполните все поля', 'fa-triangle-exclamation'); return false; }
+    state.news.unshift({ id: Date.now(), icon: 'fa-bullhorn', title: t, text: x, date: d });
+    saveAll(); renderNews(); toast('Новость добавлена!', 'fa-circle-check');
+    addXP(10);
+    return true;
+  });
+}
+function deleteNews(id) {
+  if (!confirm('Удалить эту новость?')) return;
+  state.news = state.news.filter(n => n.id !== id);
+  saveAll(); renderNews(); toast('Новость удалена', 'fa-trash');
+}
+
+/* --- РАСПИСАНИЕ --- */
+function renderSchedule() {
+  const el = document.getElementById('tab-schedule');
+  let html = `
+    <div class="section-head">
+      <h2><i class="fa-solid fa-calendar-days"></i> Расписание уроков</h2>
+      ${isAdmin() ? `<span style="color:var(--muted);font-size:14px"><i class="fa-solid fa-pen"></i> Нажмите ✏️ чтобы изменить</span>` : ''}
+    </div>
+    <div class="grid">
+  `;
+  DAYS.forEach(day => {
+    const lessons = state.schedule[day] || [];
+    html += `
+      <div class="card day-card">
+        <div class="day-title">
+          <span class="day-name"><i class="fa-solid fa-calendar-day"></i> ${day}</span>
+          ${isAdmin() ? `<button class="mini-btn" onclick="editSchedule('${day}')"><i class="fa-solid fa-pen"></i></button>` : ''}
+        </div>
+        <ul class="lesson-list">
+          ${lessons.length ? lessons.map((l,i) => `
+            <li class="lesson-item">
+              <span class="lesson-num">${i+1}</span>
+              <span>${escapeHtml(l)}</span>
+            </li>
+          `).join('') : '<li class="empty-inline"><i class="fa-solid fa-mug-hot"></i> Нет уроков</li>'}
+        </ul>
+      </div>
+    `;
+  });
+  html += `</div>`;
+  el.innerHTML = html;
+}
+function editSchedule(day) {
+  const current = (state.schedule[day] || []).join('\n');
+  openModal(`<i class="fa-solid fa-pen"></i> Расписание — ${day}`, `
+    <label>Уроки (каждый с новой строки)</label>
+    <textarea id="modal-textarea" class="textarea" style="min-height:180px">${escapeHtml(current)}</textarea>
+  `, () => {
+    state.schedule[day] = document.getElementById('modal-textarea').value.split('\n').map(s => s.trim()).filter(Boolean);
+    saveAll(); renderSchedule(); toast('Расписание обновлено', 'fa-circle-check');
+    return true;
+  });
+}
+
+/* --- ДОМАШКА --- */
+function renderHomework() {
+  const el = document.getElementById('tab-homework');
+  let html = `
+    <div class="section-head">
+      <h2><i class="fa-solid fa-book-open"></i> Домашнее задание</h2>
+      ${isAdmin() ? `<span style="color:var(--muted);font-size:14px"><i class="fa-solid fa-pen"></i> Нажмите ✏️ рядом с днём</span>` : ''}
+    </div>
+    <div class="grid">
+  `;
+  DAYS.forEach(day => {
+    const hw = state.homework[day] || [];
+    html += `
+      <div class="card day-card">
+        <div class="day-title">
+          <span class="day-name"><i class="fa-solid fa-book"></i> ${day}</span>
+          ${isAdmin() ? `<button class="mini-btn" onclick="editHomework('${day}')"><i class="fa-solid fa-pen"></i></button>` : ''}
+        </div>
+        ${hw.length ? hw.map(item => `
+          <div class="hw-item">
+            <span class="hw-subject"><i class="fa-solid fa-bookmark"></i> ${escapeHtml(item.subject)}</span>
+            ${escapeHtml(item.task)}
+          </div>
+        `).join('') : '<div class="empty-inline"><i class="fa-solid fa-mug-hot"></i> Домашки нет!</div>'}
+      </div>
+    `;
+  });
+  html += `</div>`;
+  el.innerHTML = html;
+}
+function editHomework(day) {
+  const current = (state.homework[day] || []).map(h => h.subject + ': ' + h.task).join('\n');
+  openModal(`<i class="fa-solid fa-pen"></i> Домашка — ${day}`, `
+    <label>Формат: <b>Предмет: задание</b></label>
+    <textarea id="modal-textarea" class="textarea" style="min-height:180px">${escapeHtml(current)}</textarea>
+  `, () => {
+    state.homework[day] = document.getElementById('modal-textarea').value.split('\n').map(s => s.trim()).filter(Boolean).map(line => {
+      const idx = line.indexOf(':');
+      if (idx === -1) return { subject: line, task: '' };
+      return { subject: line.slice(0, idx).trim(), task: line.slice(idx+1).trim() };
+    });
+    saveAll(); renderHomework(); toast('Домашка обновлена', 'fa-circle-check');
+    return true;
+  });
+}
+
+/* --- ВОПРОСЫ --- */
+function renderQuestions() {
+  const el = document.getElementById('tab-questions');
+  let html = `
+    <div class="section-head">
+      <h2><i class="fa-solid fa-circle-question"></i> Вопросы по сайту</h2>
+    </div>
+    <div class="card" style="margin-bottom:20px">
+      <label style="font-weight:700;font-size:15px;margin-bottom:8px;display:block;font-family:var(--font-head)">
+        <i class="fa-solid fa-paper-plane" style="color:var(--primary)"></i> Задать вопрос:
+      </label>
+      <textarea id="question-input" class="textarea" placeholder="Что-то не работает? Есть идея? Пиши сюда..."></textarea>
+      <div style="text-align:right;margin-top:12px">
+        <button class="btn btn-primary" style="width:auto;margin:0" onclick="submitQuestion()">
+          <i class="fa-solid fa-paper-plane"></i> Отправить
+        </button>
+      </div>
+    </div>
+  `;
+  if (state.questions.length === 0) {
+    html += `<div class="empty"><i class="fa-solid fa-comments"></i>Пока вопросов нет. Будь первым!</div>`;
+  } else {
+    state.questions.forEach(q => {
+      const author = userByNick(q.author);
+      const avatar = author ? author.avatar : 'fa-user';
+      const isOwner = author && author.isAdmin;
+      html += `
+        <div class="question-card">
+          <div class="q-head">
+            <span class="q-author ${isOwner ? 'owner' : ''}">
+              <span class="mini-av"><i class="fa-solid ${isOwner ? 'fa-crown' : avatar}"></i></span>
+              ${renderNickWithBadges(q.author)}
+            </span>
+            <span class="q-time"><i class="fa-regular fa-clock"></i> ${escapeHtml(q.time)}</span>
+          </div>
+          <div class="q-text">${escapeHtml(q.text).replace(/\n/g,'<br>')}</div>
+          ${q.answer ? `<div class="answer-block"><i class="fa-solid fa-circle-check"></i><div><b>Ответ:</b> ${escapeHtml(q.answer)}</div></div>` : ''}
+          ${isAdmin() ? `
+            <div class="card-actions" style="justify-content:flex-start;gap:4px">
+              <button class="mini-btn" onclick="answerQuestion(${q.id})"><i class="fa-solid fa-reply"></i> Ответить</button>
+              <button class="mini-btn danger" onclick="deleteQuestion(${q.id})"><i class="fa-solid fa-trash"></i> Удалить</button>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    });
+  }
+  el.innerHTML = html;
+}
+function submitQuestion() {
+  const input = document.getElementById('question-input');
+  const text = input.value.trim();
+  if (!text) { toast('Напишите вопрос', 'fa-triangle-exclamation'); return; }
+  state.questions.unshift({ id: Date.now(), author: state.current, text, time: formatDateTime(new Date()), answer: null });
+  saveAll(); input.value = ''; renderQuestions();
+  toast('Вопрос отправлен!', 'fa-circle-check');
+  addXP(5);
+}
+function answerQuestion(id) {
+  const q = state.questions.find(x => x.id === id);
+  if (!q) return;
+  openModal('<i class="fa-solid fa-reply"></i> Ответ', `
+    <p style="color:var(--muted);margin-bottom:10px">От <b>${escapeHtml(q.author)}</b>:<br>${escapeHtml(q.text)}</p>
+    <label>Ваш ответ</label>
+    <textarea id="modal-textarea" class="textarea" style="min-height:120px"></textarea>
+  `, () => {
+    const val = document.getElementById('modal-textarea').value.trim();
+    if (!val) { toast('Введите ответ', 'fa-triangle-exclamation'); return false; }
+    q.answer = val; saveAll(); renderQuestions(); toast('Ответ добавлен', 'fa-circle-check');
+    return true;
+  });
+}
+function deleteQuestion(id) {
+  if (!confirm('Удалить?')) return;
+  state.questions = state.questions.filter(q => q.id !== id);
+  saveAll(); renderQuestions(); toast('Удалено', 'fa-trash');
+}
+
+/* ============================================================
+   ДОСКА ПОЧЁТА
+   ============================================================ */
+function renderHonor() {
+  const el = document.getElementById('tab-honor');
+  let html = `
+    <div class="section-head">
+      <h2><i class="fa-solid fa-award"></i> Доска почёта</h2>
+      ${isAdmin() ? `<button class="btn btn-gold" style="width:auto;margin:0;padding:12px 20px" onclick="addHonor()">
+        <i class="fa-solid fa-plus"></i> Добавить
+      </button>` : `<span style="color:var(--muted);font-size:14px;display:flex;align-items:center;gap:6px">
+        <i class="fa-solid fa-crown" style="color:var(--gold-2)"></i> Лучшие ученики 7Б
+      </span>`}
+    </div>
+    <div class="honor-grid">
+  `;
+  if (state.honor.length === 0) {
+    html += `
+      <div class="honor-empty">
+        <i class="fa-solid fa-award"></i>
+        <div style="font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--text);margin-bottom:8px">Доска пока пуста</div>
+        <div>${isAdmin() ? 'Добавь первых героев класса!' : 'Владелец скоро добавит лучших!'}</div>
+      </div>
+    `;
+  } else {
+    state.honor.forEach(h => {
+      const u = userByNick(h.nick);
+      const avatar = u ? u.avatar : 'fa-user';
+      const avatarContent = h.photo
+        ? `<img src="${h.photo}" alt="">`
+        : `<i class="fa-solid ${avatar}"></i>`;
+      html += `
+        <div class="honor-card">
+          <div class="honor-shine"></div>
+          ${isAdmin() ? `<button class="honor-delete" onclick="removeHonor(${h.id})" title="Убрать"><i class="fa-solid fa-xmark"></i></button>` : ''}
+          <div class="honor-avatar">${avatarContent}</div>
+          <div class="honor-name">${escapeHtml(h.name)}</div>
+          <div class="honor-reason">${escapeHtml(h.reason)}</div>
+          <div class="honor-stars">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <div class="honor-date"><i class="fa-regular fa-calendar"></i> ${escapeHtml(h.date)}</div>
+        </div>
+      `;
+    });
+  }
+  html += `</div>`;
+  el.innerHTML = html;
+}
+
+function addHonor() {
+  let photoData = null;
+  openModal('<i class="fa-solid fa-award"></i> Добавить на доску почёта', `
+    <label>Ник ученика <span style="color:var(--danger)">*</span></label>
+    <input id="honor-nick" placeholder="Например: Квасыч" list="honor-nicks" autocomplete="off">
+    <datalist id="honor-nicks">
+      ${state.users.filter(u => !state.honor.some(h => h.nick === u.nick)).map(u => `<option value="${escapeHtml(u.nick)}">${escapeHtml(u.name)}</option>`).join('')}
+    </datalist>
+    <label>За что (причина) <span style="color:var(--danger)">*</span></label>
+    <textarea id="honor-reason" class="textarea" style="min-height:90px" placeholder="Например: за отличную учёбу и помощь одноклассникам"></textarea>
+    <label><i class="fa-solid fa-image" style="color:var(--primary)"></i> Фото (необязательно)</label>
+    <div class="honor-file-row">
+      <input type="file" id="honor-photo" accept="image/*">
+      <button type="button" class="btn btn-small" id="honor-photo-clear" style="display:none;color:var(--danger);border-color:var(--danger)">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="honor-photo-preview" id="honor-photo-preview">
+      <img id="honor-photo-img" alt="">
+      <p style="font-size:12px;color:var(--muted);margin-top:8px">Предпросмотр · <span id="honor-photo-size"></span></p>
+    </div>
+  `, () => {
+    const nick = document.getElementById('honor-nick').value.trim();
+    const reason = document.getElementById('honor-reason').value.trim();
+    if (!nick) { toast('Введите ник', 'fa-triangle-exclamation'); return false; }
+    if (!reason) { toast('Введите причину', 'fa-triangle-exclamation'); return false; }
+    const u = userByNick(nick);
+    if (!u) { toast('Пользователь с таким ником не найден', 'fa-triangle-exclamation'); return false; }
+    if (state.honor.some(h => h.nick === u.nick)) { toast('Этот ученик уже на доске', 'fa-triangle-exclamation'); return false; }
+
+    const item = {
+      id: Date.now(),
+      nick: u.nick,
+      name: u.name,
+      reason,
+      date: formatDate(new Date())
+    };
+    if (photoData) item.photo = photoData;
+
+    try {
+      state.honor.push(item);
+      if (!u.achievements.includes('honor_member')) u.achievements.push('honor_member');
+      if (u.nick === state.current) updateHeader();
+      saveAll();
+      renderHonor();
+      toast(`${u.name} на доске почёта!`, 'fa-award');
+      confetti();
+    } catch (e) {
+      toast('Ошибка сохранения. Попробуй фото поменьше', 'fa-triangle-exclamation');
+      return false;
+    }
+    return true;
+  });
+
+  setTimeout(() => {
+    const fileInput = document.getElementById('honor-photo');
+    const preview = document.getElementById('honor-photo-preview');
+    const previewImg = document.getElementById('honor-photo-img');
+    const clearBtn = document.getElementById('honor-photo-clear');
+    const sizeLabel = document.getElementById('honor-photo-size');
+
+    fileInput.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        toast('Это не изображение', 'fa-triangle-exclamation');
+        return;
+      }
+      if (file.size > 8 * 1024 * 1024) {
+        toast('Файл больше 8 МБ', 'fa-triangle-exclamation');
+        return;
+      }
+      try {
+        photoData = await resizeImage(file, 320);
+        previewImg.src = photoData;
+        preview.style.display = 'block';
+        clearBtn.style.display = 'inline-flex';
+        const kb = Math.round(photoData.length * 0.75 / 1024);
+        sizeLabel.textContent = '~' + kb + ' КБ';
+      } catch (err) {
+        toast('Не удалось загрузить фото', 'fa-triangle-exclamation');
+      }
+    });
+
+    clearBtn.addEventListener('click', () => {
+      photoData = null;
+      fileInput.value = '';
+      preview.style.display = 'none';
+      clearBtn.style.display = 'none';
+    });
+  }, 60);
+}
+
+function removeHonor(id) {
+  if (!confirm('Убрать с доски почёта?')) return;
+  state.honor = state.honor.filter(h => h.id !== id);
+  saveAll(); renderHonor();
+  toast('Убрано с доски', 'fa-trash');
+}
+
+/* --- ИГРЫ --- */
+function renderGames() {
+  const el = document.getElementById('tab-games');
+  const games = [
+    { fn: 'playReaction', icon: 'fa-bolt', title: 'Тест реакции', desc: 'Насколько быстро ты жмёшь?' },
+    { fn: 'playClicker', icon: 'fa-clover', title: 'Кликер', desc: 'Сколько кликов наберёшь?' },
+    { fn: 'playMemory', icon: 'fa-brain', title: 'Память', desc: 'Найди все пары' },
+    { fn: 'playGuess', icon: 'fa-dice', title: 'Угадай число', desc: '1–100, 7 попыток' },
+    { fn: 'playRPS', icon: 'fa-hand-scissors', title: 'Кам-нож-бум', desc: 'Против компьютера' },
+    { fn: 'playTyping', icon: 'fa-keyboard', title: 'Печатай быстро', desc: 'Скорость набора текста' }
+  ];
+  let html = `
+    <div class="section-head">
+      <h2><i class="fa-solid fa-gamepad"></i> Мини-игры</h2>
+      <span style="color:var(--muted);font-size:14px"><i class="fa-solid fa-mug-hot"></i> Переменка — играем!</span>
+    </div>
+    <div class="games-grid">
+  `;
+  games.forEach(g => {
+    html += `
+      <div class="game-card" onclick="${g.fn}()">
+        <div class="game-icon"><i class="fa-solid ${g.icon}"></i></div>
+        <h3>${g.title}</h3>
+        <p>${g.desc}</p>
+      </div>
+    `;
+  });
+  html += `</div>`;
+  el.innerHTML = html;
+}
+
+function playReaction() {
+  openModal('<i class="fa-solid fa-bolt"></i> Тест реакции', `
+    <div id="react-area" style="height:220px;background:var(--bg-2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;color:var(--muted);font-weight:700;user-select:none;transition:all .2s;font-family:var(--font-head);gap:10px">
+      <i class="fa-solid fa-hand-pointer"></i> Нажми, чтобы начать
+    </div>
+    <p id="react-result" style="text-align:center;margin-top:14px;font-size:22px;font-weight:700;min-height:28px;font-family:var(--font-head);color:var(--primary)"></p>
+  `, null, { hideSave: true });
+  const area = document.getElementById('react-area');
+  const result = document.getElementById('react-result');
+  let st = 'idle', start, timer;
+  area.onclick = () => {
+    if (st === 'idle' || st === 'done') {
+      st = 'wait'; area.style.background = 'linear-gradient(135deg, #fbbf24, #f59e0b)'; area.style.color = '#78350f';
+      area.innerHTML = '<i class="fa-solid fa-hourglass-half fa-spin"></i> Жди зелёного...';
+      result.textContent = '';
+      timer = setTimeout(() => {
+        st = 'go'; area.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))'; area.style.color = '#fff';
+        area.innerHTML = '<i class="fa-solid fa-hand-pointer"></i> ЖМИ!';
+        start = performance.now();
+      }, 1200 + Math.random() * 3000);
+    } else if (st === 'wait') {
+      clearTimeout(timer); st = 'idle';
+      area.style.background = 'var(--bg-2)'; area.style.color = 'var(--muted)';
+      area.innerHTML = '<i class="fa-solid fa-hand-pointer"></i> Рано! Ещё раз';
+      result.textContent = 'Рано!';
+    } else if (st === 'go') {
+      const t = Math.round(performance.now() - start);
+      st = 'done';
+      area.style.background = 'var(--bg-2)'; area.style.color = 'var(--primary)';
+      area.innerHTML = '<i class="fa-solid fa-rotate-right"></i> Нажми ещё';
+      let grade, ic;
+      if (t < 200) { grade = 'Космос!'; ic = 'fa-rocket'; }
+      else if (t < 300) { grade = 'Отлично!'; ic = 'fa-bolt'; }
+      else if (t < 450) { grade = 'Хорошо'; ic = 'fa-thumbs-up'; }
+      else { grade = 'Медленно'; ic = 'fa-turtle'; }
+      result.innerHTML = `<i class="fa-solid ${ic}"></i> ${t} мс — ${grade}`;
+      if (t < 250) { confetti(); addXP(15); }
+      else addXP(3);
+    }
+  };
+}
+
+function playClicker() {
+  const u = currentUser();
+  let score = u.stats.clicks || 0;
+  openModal('<i class="fa-solid fa-clover"></i> Кликер', `
+    <div style="text-align:center">
+      <div style="font-size:56px;font-weight:700;color:var(--primary);font-variant-numeric:tabular-nums;font-family:var(--font-head)" id="click-score">${score}</div>
+      <button id="click-btn" class="btn" style="font-size:56px;width:180px;height:180px;border-radius:50%;margin-top:16px;padding:0;color:var(--primary);border:3px solid var(--primary);background:var(--card);transition:transform .1s">
+        <i class="fa-solid fa-clover"></i>
+      </button>
+      <p style="margin-top:14px;color:var(--muted);font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px">
+        <i class="fa-solid fa-floppy-disk"></i> Прогресс сохраняется
+      </p>
+      <p style="margin-top:6px;color:var(--muted);font-size:14px;font-family:var(--font-head)" id="click-msg"></p>
+    </div>
+  `, null, { hideSave: true });
+  const btn = document.getElementById('click-btn');
+  btn.onclick = e => {
+    score++;
+    u.stats.clicks = score;
+    saveUser();
+    document.getElementById('click-score').textContent = score;
+    btn.style.transform = 'scale(.9) rotate(-10deg)';
+    setTimeout(() => btn.style.transform = 'scale(1)', 90);
+    const fl = document.createElement('div');
+    fl.innerHTML = '<span style="color:var(--primary);font-weight:800;font-size:20px">+1</span>';
+    fl.style.cssText = `position:fixed;left:${e.clientX}px;top:${e.clientY}px;pointer-events:none;transition:all .8s;z-index:9999`;
+    document.body.appendChild(fl);
+    requestAnimationFrame(() => { fl.style.transform = 'translateY(-60px)'; fl.style.opacity = '0'; });
+    setTimeout(() => fl.remove(), 850);
+    const msgs = { 50:'Хорошо!', 100:'Ещё быстрее!', 300:'Огонь!', 500:'Ты машина!', 1000:'Мастер!', 2000:'Легенда!' };
+    if (msgs[score]) document.getElementById('click-msg').innerHTML = `<i class="fa-solid fa-star"></i> ${msgs[score]}`;
+    if ([100, 500, 1000, 2000].includes(score)) { confetti(); toast(`${score} кликов!`, 'fa-trophy'); addXP(50); }
+    checkAchievements();
+  };
+}
+
+function playMemory() {
+  const icons = ['fa-clover','fa-gamepad','fa-bullseye','fa-trophy','fa-star','fa-gift','fa-palette','fa-heart'];
+  const cards = [...icons, ...icons].sort(() => Math.random() - 0.5);
+  let flipped = [], matched = 0, moves = 0, locked = false;
+  let html = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">';
+  cards.forEach((ic, i) => html += `<div class="mem-card" data-i="${i}" data-ic="${ic}"><i class="fa-solid ${ic}"></i></div>`);
+  html += '</div><p style="text-align:center;margin-top:14px;font-family:var(--font-head)">Ходы: <b id="mem-moves">0</b> • Пары: <b id="mem-pairs">0</b>/8</p>';
+  openModal('<i class="fa-solid fa-brain"></i> Память', html, null, { hideSave: true });
+  document.querySelectorAll('.mem-card').forEach(card => {
+    card.onclick = () => {
+      if (locked || card.classList.contains('matched') || card.classList.contains('flipped')) return;
+      card.classList.add('flipped');
+      flipped.push(card);
+      if (flipped.length === 2) {
+        moves++;
+        document.getElementById('mem-moves').textContent = moves;
+        locked = true;
+        if (flipped[0].dataset.ic === flipped[1].dataset.ic) {
+          setTimeout(() => {
+            flipped.forEach(c => { c.classList.add('matched'); c.classList.remove('flipped'); });
+            flipped = []; matched++; locked = false;
+            document.getElementById('mem-pairs').textContent = matched;
+            if (matched === 8) {
+              toast(`Победа за ${moves} ходов!`, 'fa-trophy');
+              confetti(); addXP(30);
+            }
+          }, 400);
+        } else {
+          setTimeout(() => {
+            flipped.forEach(c => c.classList.remove('flipped'));
+            flipped = []; locked = false;
+          }, 750);
+        }
+      }
+    };
+  });
+}
+
+function playGuess() {
+  const secret = Math.floor(Math.random() * 100) + 1;
+  let tries = 0;
+  const maxTries = 7;
+  openModal('<i class="fa-solid fa-dice"></i> Угадай число', `
+    <p style="text-align:center;margin-bottom:14px;color:var(--muted);font-family:var(--font-head)">
+      <i class="fa-solid fa-lightbulb" style="color:var(--accent)"></i> Загадал число от 1 до 100
+    </p>
+    <input type="number" id="guess-input" placeholder="?" min="1" max="100" style="text-align:center;font-size:32px;font-weight:800;padding:18px;font-family:var(--font-head)">
+    <div id="guess-msg" style="text-align:center;margin-top:14px;font-size:22px;font-weight:700;min-height:34px;font-family:var(--font-head)"></div>
+    <p style="text-align:center;color:var(--muted);font-size:15px;font-family:var(--font-head)">Попыток: <b id="guess-tries">0</b> / ${maxTries}</p>
+    <button class="btn btn-primary" style="width:100%;margin-top:12px" id="guess-submit-btn">
+      <i class="fa-solid fa-check"></i> Проверить
+    </button>
+  `, null, { hideSave: true });
+  const input = document.getElementById('guess-input');
+  const msg = document.getElementById('guess-msg');
+  const triesEl = document.getElementById('guess-tries');
+  const submitBtn = document.getElementById('guess-submit-btn');
+  function check() {
+    const v = parseInt(input.value);
+    if (!v || v < 1 || v > 100) { msg.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Введи 1–100'; return; }
+    tries++; triesEl.textContent = tries;
+    if (v === secret) {
+      msg.innerHTML = `<i class="fa-solid fa-trophy" style="color:var(--primary)"></i> Угадал! Это ${secret}`;
+      msg.style.color = 'var(--primary)';
+      input.disabled = true; submitBtn.disabled = true; submitBtn.style.opacity = '.5';
+      confetti(); toast('Победа за ' + tries + ' попыток!', 'fa-trophy'); addXP(25);
+      return;
+    }
+    if (tries >= maxTries) {
+      msg.innerHTML = `<i class="fa-solid fa-face-sad-tear" style="color:var(--danger)"></i> Было ${secret}`;
+      msg.style.color = 'var(--danger)';
+      input.disabled = true; submitBtn.disabled = true; submitBtn.style.opacity = '.5';
+      return;
+    }
+    if (v < secret) {
+      const diff = secret - v;
+      msg.innerHTML = `<i class="fa-solid fa-arrow-up" style="color:#3b82f6"></i> Больше${diff <= 10 ? ' (горячо!)' : ''}`;
+      msg.style.color = '#3b82f6';
+    } else {
+      const diff = v - secret;
+      msg.innerHTML = `<i class="fa-solid fa-arrow-down" style="color:var(--accent)"></i> Меньше${diff <= 10 ? ' (горячо!)' : ''}`;
+      msg.style.color = 'var(--accent)';
+    }
+    msg.style.animation = 'pop .3s ease';
+    setTimeout(() => msg.style.animation = '', 300);
+    input.value = ''; input.focus();
+  }
+  submitBtn.onclick = check;
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  setTimeout(() => input.focus(), 100);
+}
+
+function playRPS() {
+  window._rpsWin = 0; window._rpsLose = 0;
+  openModal('<i class="fa-solid fa-hand-scissors"></i> Камень-ножницы-бумага', `
+    <div style="text-align:center">
+      <div style="font-size:72px;min-height:100px;line-height:1;color:var(--primary);transition:transform .3s" id="rps-computer">
+        <i class="fa-solid fa-robot"></i>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap">
+        <button class="btn rps-btn" onclick="playRPSRound('камень')" title="Камень"><i class="fa-solid fa-hand-back-fist"></i></button>
+        <button class="btn rps-btn" onclick="playRPSRound('бумага')" title="Бумага"><i class="fa-solid fa-hand"></i></button>
+        <button class="btn rps-btn" onclick="playRPSRound('ножницы')" title="Ножницы"><i class="fa-solid fa-hand-scissors"></i></button>
+      </div>
+      <p id="rps-result" style="margin-top:18px;font-size:22px;font-weight:700;min-height:32px;font-family:var(--font-head)"></p>
+      <p style="color:var(--muted);margin-top:10px;font-family:var(--font-head)"><i class="fa-solid fa-medal" style="color:var(--accent)"></i> Счёт: <b id="rps-score">0 : 0</b></p>
+    </div>
+  `, null, { hideSave: true });
+}
+function playRPSRound(player) {
+  const opts = ['камень','бумага','ножницы'];
+  const icons = { камень:'fa-hand-back-fist', бумага:'fa-hand', ножницы:'fa-hand-scissors' };
+  const computer = opts[Math.floor(Math.random()*3)];
+  const cEl = document.getElementById('rps-computer');
+  let spins = 0;
+  const spin = setInterval(() => {
+    cEl.innerHTML = `<i class="fa-solid ${icons[opts[Math.floor(Math.random()*3)]]}"></i>`;
+    if (++spins > 8) {
+      clearInterval(spin);
+      cEl.innerHTML = `<i class="fa-solid ${icons[computer]}"></i>`;
+      cEl.style.animation = 'pop .4s ease';
+      setTimeout(() => cEl.style.animation = '', 400);
+      const result = document.getElementById('rps-result');
+      if (player === computer) {
+        result.innerHTML = '<i class="fa-solid fa-handshake" style="color:var(--accent)"></i> Ничья!';
+      } else if (
+        (player === 'камень' && computer === 'ножницы') ||
+        (player === 'бумага' && computer === 'камень') ||
+        (player === 'ножницы' && computer === 'бумага')
+      ) {
+        result.innerHTML = '<i class="fa-solid fa-trophy" style="color:var(--primary)"></i> Ты победил!';
+        window._rpsWin++; addXP(5);
+      } else {
+        result.innerHTML = '<i class="fa-solid fa-face-sad-tear" style="color:var(--danger)"></i> Ты проиграл';
+        window._rpsLose++;
+      }
+      document.getElementById('rps-score').textContent = window._rpsWin + ' : ' + window._rpsLose;
+    }
+  }, 100);
+}
+
+function playTyping() {
+  const easy = ['школа','урок','парта','ручка','мел','доска','звонок','форма','сменка','рюкзак','пенал','ластик','линейка','глобус','атлас'];
+  const medium = ['дневник','каникулы','тетрадь','циркуль','учитель','дежурный','отличник','портфель','расписание','перемена','классный час','физкультура','литература','английский','природоведение'];
+  const hard = ['алгебра','геометрия','биология','география','информатика','технология','черчение','обществознание','астрономия','электричество','фотосинтез','атмосфера','температура','окружность','знаменатель','числитель','многоугольник','пятиугольник','прямоугольник','параллелепипед','перпендикуляр','биссектриса','гипотенуза','равнобедренный'];
+  const veryHard = ['любознательность','ответственность','пунктуальность','впечатлительность','воображение','восклицание','вопросительный','существительное','прилагательное','обстоятельство','деепричастие','словосочетание','правописание','достопримечательность'];
+  const funny = ['квас','клевер','помидор','пельмень','бутерброд','мороженое','шоколадка','мандарин','печенюшка','конфетка','пончик'];
+  const all = [...easy, ...medium, ...hard, ...veryHard, ...funny];
+  let started = false, currentWord, score = 0, timeLeft = 60, timer;
+  let usedWords = [];
+  function pickWord() {
+    let pool = all.filter(w => !usedWords.includes(w));
+    if (pool.length === 0) { usedWords = []; pool = all; }
+    const weighted = [];
+    pool.forEach(w => {
+      const weight = w.length > 12 ? 5 : w.length > 10 ? 3 : w.length > 7 ? 2 : 1;
+      for (let i = 0; i < weight; i++) weighted.push(w);
+    });
+    const word = weighted[Math.floor(Math.random() * weighted.length)];
+    usedWords.push(word);
+    if (usedWords.length > 15) usedWords.shift();
+    return word;
+  }
+  openModal('<i class="fa-solid fa-keyboard"></i> Печатай быстро', `
+    <p style="text-align:center;color:var(--muted);margin-bottom:8px;font-family:var(--font-head)">
+      <i class="fa-solid fa-clock" style="color:var(--accent)"></i> 60 секунд — печатай слова!
+    </p>
+    <div id="type-word" style="font-size:34px;font-weight:700;text-align:center;color:var(--primary);padding:22px;letter-spacing:3px;font-family:var(--font-head);min-height:90px;display:flex;align-items:center;justify-content:center;transition:transform .15s;word-break:break-word">
+      <i class="fa-solid fa-rocket"></i> готов?
+    </div>
+    <input id="type-input" placeholder="Начни печатать..." style="text-align:center;font-size:20px;font-family:var(--font-head)">
+    <p style="text-align:center;margin-top:12px;font-family:var(--font-head);font-size:16px">
+      <i class="fa-solid fa-check" style="color:var(--primary)"></i> Счёт: <b id="type-score">0</b>
+      &nbsp;•&nbsp;
+      <i class="fa-solid fa-hourglass-half" style="color:var(--accent)"></i> Время: <b id="type-time">60</b>с
+    </p>
+  `, null, { hideSave: true });
+  const input = document.getElementById('type-input');
+  const wordEl = document.getElementById('type-word');
+  const scoreEl = document.getElementById('type-score');
+  const timeEl = document.getElementById('type-time');
+  function nextWord() {
+    currentWord = pickWord();
+    wordEl.textContent = currentWord;
+    wordEl.style.transform = 'scale(.85)';
+    wordEl.style.color = 'var(--primary)';
+    setTimeout(() => wordEl.style.transform = 'scale(1)', 100);
+  }
+  input.addEventListener('input', () => {
+    if (!started) {
+      started = true; nextWord();
+      timer = setInterval(() => {
+        timeLeft--;
+        timeEl.textContent = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          input.disabled = true;
+          wordEl.textContent = 'Финиш!';
+          wordEl.style.color = 'var(--accent)';
+          toast('Результат: ' + score + ' слов', 'fa-flag-checkered');
+          addXP(Math.min(50, score * 2));
+          if (score >= 15) confetti();
+        }
+      }, 1000);
+    }
+    if (input.value.trim().toLowerCase() === currentWord) {
+      score++; scoreEl.textContent = score;
+      wordEl.style.color = 'var(--accent)';
+      wordEl.style.transform = 'scale(1.15)';
+      setTimeout(() => { wordEl.style.color = 'var(--primary)'; }, 200);
+      input.value = ''; nextWord();
+    }
+  });
+  setTimeout(() => input.focus(), 100);
+}
+
+/* --- РАЗВЛЕЧЕНИЯ --- */
+function renderFun() {
+  const el = document.getElementById('tab-fun');
+  el.innerHTML = `
+    <div class="section-head">
+      <h2><i class="fa-solid fa-wand-magic-sparkles"></i> Развлечения</h2>
+      <span style="color:var(--muted);font-size:14px"><i class="fa-solid fa-face-laugh-beam"></i> Скучно? Не проблема!</span>
+    </div>
+    <div class="fun-grid">
+      <div class="fun-card" onclick="funJoke()"><div class="fun-icon"><i class="fa-solid fa-face-laugh-squint"></i></div><h4>Шутка</h4><p>Случайная школьная шутка</p></div>
+      <div class="fun-card" onclick="funFact()"><div class="fun-icon"><i class="fa-solid fa-lightbulb"></i></div><h4>Факт</h4><p>Интересный факт дня</p></div>
+      <div class="fun-card" onclick="funFortune()"><div class="fun-icon"><i class="fa-solid fa-hat-wizard"></i></div><h4>Гадание</h4><p>Что тебя ждёт сегодня?</p></div>
+      <div class="fun-card" onclick="funPredict()"><div class="fun-icon"><i class="fa-solid fa-wand-sparkles"></i></div><h4>Предсказание</h4><p>Магический шар желаний</p></div>
+      <div class="fun-card" onclick="funDisco()"><div class="fun-icon"><i class="fa-solid fa-compact-disc"></i></div><h4>Дискотека</h4><p>Танцевальная пауза!</p></div>
+      <div class="fun-card" onclick="funBored()"><div class="fun-icon"><i class="fa-solid fa-dice-five"></i></div><h4>Мне скучно!</h4><p>Случайное развлечение</p></div>
+      <div class="fun-card" onclick="funParty()"><div class="fun-icon"><i class="fa-solid fa-champagne-glasses"></i></div><h4>Вечеринка</h4><p>Большой залп конфетти</p></div>
+      <div class="fun-card" onclick="funWisdom()"><div class="fun-icon"><i class="fa-solid fa-scroll"></i></div><h4>Мудрость дня</h4><p>Совет от клевера</p></div>
+    </div>
+    <div class="fun-result" id="fun-result">
+      <i class="fa-solid fa-hand-pointer fun-result-icon"></i>
+      <div class="fun-result-text">Выбери развлечение выше!</div>
+    </div>
+  `;
+  const u = currentUser();
+  if (u) { u.stats.funOpens = (u.stats.funOpens || 0) + 1; saveUser(); checkAchievements(); }
+}
+function showFunResult(icon, text) {
+  const el = document.getElementById('fun-result');
+  if (!el) return;
+  el.innerHTML = `<i class="fa-solid ${icon} fun-result-icon"></i><div class="fun-result-text">${text}</div>`;
+  el.style.animation = 'rise .35s ease';
+  setTimeout(() => el.style.animation = '', 400);
+}
+function randomFrom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function funJoke() { showFunResult('fa-face-laugh-squint', randomFrom(jokes)); addXP(1); }
+function funFact() { showFunResult('fa-lightbulb', randomFrom(facts)); addXP(1); }
+function funFortune() { showFunResult('fa-hat-wizard', randomFrom(fortunes)); addXP(1); }
+function funPredict() { showFunResult('fa-wand-sparkles', randomFrom(predictions)); addXP(1); }
+function funWisdom() { showFunResult('fa-scroll', '«' + randomFrom(fortunes) + '»'); addXP(1); }
+function funDisco() {
+  document.body.classList.add('disco');
+  toast('Дискотека началась!', 'fa-compact-disc');
+  confetti();
+  unlockAchievement('disco');
+  for (let i = 0; i < 20; i++) setTimeout(() => spawnFloat(['fa-star','fa-music','fa-bolt','fa-fire'][Math.floor(Math.random()*4)]), i * 100);
+  setTimeout(() => { document.body.classList.remove('disco'); toast('Дискотека закончилась!', 'fa-music'); }, 8000);
+}
+function funBored() {
+  const actions = [funJoke, funFact, funFortune, funPredict, funWisdom];
+  randomFrom(actions)();
+  const actions2 = [
+    () => { toast('Погладь питомца!', 'fa-clover'); switchTab('pet'); },
+    () => { toast('Сыграй в игру!', 'fa-gamepad'); switchTab('games'); },
+    () => { toast('Поставь реакцию!', 'fa-heart'); switchTab('news'); },
+    () => { toast('Напиши в чат!', 'fa-comments'); switchTab('chat'); },
+    () => { toast('Загляни на доску почёта!', 'fa-award'); switchTab('honor'); }
+  ];
+  setTimeout(() => randomFrom(actions2)(), 1500);
+}
+function funParty() {
+  confetti();
+  for (let i = 0; i < 3; i++) setTimeout(confetti, i * 500);
+  toast('Вечеринка!', 'fa-champagne-glasses');
+  addXP(3);
+}
+
+/* --- ЧАТ --- */
+function renderChat() {
+  const el = document.getElementById('tab-chat');
+  el.innerHTML = `
+    <div class="section-head">
+      <h2><i class="fa-solid fa-comments"></i> Чат класса</h2>
+      ${isAdmin() ? `<span style="color:var(--gold-2);font-size:14px;display:flex;align-items:center;gap:6px;font-family:var(--font-head);font-weight:700">
+        <i class="fa-solid fa-crown"></i> Ты — Владелец
+      </span>` : ''}
+    </div>
+    <div class="chat-wrap">
+      <div class="chat-head">
+        <h3><i class="fa-solid fa-comment-dots"></i> Общий чат 7Б</h3>
+        <span class="online-count"><span class="online-dot"></span> ${countOnline()} онлайн</span>
+      </div>
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="chat-input-row">
+        <div class="chat-emojis">
+          <button class="chat-emoji-btn" onclick="insertEmoji('😄')"><i class="fa-regular fa-face-smile"></i></button>
+          <button class="chat-emoji-btn" onclick="insertEmoji('👍')"><i class="fa-solid fa-thumbs-up"></i></button>
+          <button class="chat-emoji-btn" onclick="insertEmoji('👑')"><i class="fa-solid fa-crown"></i></button>
+        </div>
+        <input id="chat-input" placeholder="Сообщение..." maxlength="200">
+        <button class="chat-send" onclick="sendChat()"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
+  `;
+  renderChatMessages();
+  const inp = document.getElementById('chat-input');
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });
+}
+function insertEmoji(emoji) {
+  const inp = document.getElementById('chat-input');
+  inp.value += emoji;
+  inp.focus();
+}
+function countOnline() {
+  const cutoff = Date.now() - 5 * 60 * 1000;
+  const recent = new Set(state.chat.filter(m => m.ts > cutoff).map(m => m.author));
+  if (state.current) recent.add(state.current);
+  return Math.max(1, recent.size);
+}
+function renderChatMessages() {
+  const el = document.getElementById('chat-messages');
+  if (!el) return;
+  if (state.chat.length === 0) {
+    el.innerHTML = `<div style="text-align:center;color:var(--muted);margin:auto;font-family:var(--font-head)">
+      <i class="fa-solid fa-comments" style="font-size:40px;opacity:.3;display:block;margin-bottom:8px"></i>
+      Сообщений пока нет. Напиши первым!
+    </div>`;
+    return;
+  }
+  let html = '';
+  state.chat.slice(-100).forEach(m => {
+    const author = userByNick(m.author);
+    const avatar = author ? author.avatar : 'fa-user';
+    const isOwner = author && author.isAdmin;
+    const own = m.author === state.current;
+    const lv = author ? getLevel(author.xp) : { level: 1 };
+    const levelBadge = isOwner
+      ? '<span class="msg-level"><i class="fa-solid fa-infinity"></i> MAX</span>'
+      : `<span class="msg-level"><i class="fa-solid fa-star"></i> Ур. ${lv.level}</span>`;
+    const ownerPrefix = isOwner
+      ? '<span class="owner-prefix"><i class="fa-solid fa-crown"></i> Владелец</span>'
+      : '';
+    html += `
+      <div class="chat-msg ${own ? 'own' : ''}">
+        <div class="msg-avatar ${isOwner ? 'owner' : ''}"><i class="fa-solid ${isOwner ? 'fa-crown' : avatar}"></i></div>
+        <div class="msg-body">
+          <div class="msg-author">${ownerPrefix}<span>${escapeHtml(m.author)}</span>${levelBadge}<span class="msg-time">${m.time}</span></div>
+          <div class="msg-text">${escapeHtml(m.text)}</div>
+        </div>
+      </div>
+    `;
+  });
+  el.innerHTML = html;
+  scrollChatBottom();
+}
+function scrollChatBottom() {
+  const el = document.getElementById('chat-messages');
+  if (el) el.scrollTop = el.scrollHeight;
+}
+function sendChat() {
+  const inp = document.getElementById('chat-input');
+  const text = inp.value.trim();
+  if (!text) return;
+  const u = currentUser();
+  state.chat.push({ author: state.current, text, ts: Date.now(), time: formatTime(new Date()) });
+  u.stats.msgs = (u.stats.msgs || 0) + 1;
+  saveUser(); saveAll();
+  inp.value = '';
+  addXP(1);
+  checkAchievements();
+}
+
+/* --- ПИТОМЕЦ --- */
+function renderPet() {
+  const el = document.getElementById('tab-pet');
+  const p = state.pet;
+  const mins = (Date.now() - p.lastUpdate) / 60000;
+  p.hunger = Math.max(0, p.hunger - mins * 2);
+  p.mood = Math.max(0, p.mood - mins * 1);
+  p.lastUpdate = Date.now();
+  saveAllLocal();
+  const moodEmoji = p.mood > 70 ? 'happy' : p.mood < 30 ? 'sad' : '';
+  const petName = p.name || 'Клеверок';
+  el.innerHTML = `
+    <div class="section-head">
+      <h2><i class="fa-solid fa-clover"></i> Питомец класса</h2>
+      <span style="color:var(--muted);font-size:14px"><i class="fa-solid fa-heart"></i> Заботься о нём!</span>
+    </div>
+    <div class="pet-wrap">
+      <div class="pet-card">
+        <div class="pet-name">
+          ${escapeHtml(petName)}
+          <button class="pet-rename-btn" onclick="renamePet()" title="Переименовать"><i class="fa-solid fa-pen"></i></button>
+        </div>
+        <div class="pet-avatar ${moodEmoji}" id="pet-avatar" onclick="patPet()">
+          <i class="fa-solid fa-clover"></i>
+        </div>
+        <p style="color:var(--muted);font-size:14px;margin-top:8px">Кликни, чтобы погладить!</p>
+        <p style="color:var(--muted);font-size:13px;margin-top:6px;font-style:italic" id="pet-speech"></p>
+      </div>
+      <div class="pet-card">
+        <h3 style="color:var(--primary);font-family:var(--font-head);margin-bottom:14px"><i class="fa-solid fa-heart-pulse"></i> Состояние</h3>
+        <div class="pet-stats">
+          <div class="pet-stat">
+            <div class="pet-stat-label"><span><i class="fa-solid fa-bowl-food"></i> Сытость</span><span>${Math.round(p.hunger)}%</span></div>
+            <div class="pet-stat-bar hunger"><div style="width:${p.hunger}%"></div></div>
+          </div>
+          <div class="pet-stat">
+            <div class="pet-stat-label"><span><i class="fa-solid fa-face-smile"></i> Настроение</span><span>${Math.round(p.mood)}%</span></div>
+            <div class="pet-stat-bar mood"><div style="width:${p.mood}%"></div></div>
+          </div>
+          <div class="pet-stat">
+            <div class="pet-stat-label"><span><i class="fa-solid fa-utensils"></i> Покормлен</span><span>${p.feedCount || 0} раз</span></div>
+          </div>
+          <div class="pet-stat">
+            <div class="pet-stat-label"><span><i class="fa-solid fa-hand-holding-heart"></i> Поглажен</span><span>${p.patCount || 0} раз</span></div>
+          </div>
+        </div>
+        <div class="pet-actions">
+          <button class="btn" onclick="feedPet()"><i class="fa-solid fa-apple-whole"></i> Покормить</button>
+          <button class="btn" onclick="waterPet()"><i class="fa-solid fa-droplet"></i> Полить</button>
+          <button class="btn" onclick="playPet()"><i class="fa-solid fa-baseball"></i> Поиграть</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function renamePet() {
+  const p = state.pet;
+  openModal('<i class="fa-solid fa-pen"></i> Переименовать питомца', `
+    <label>Новое имя</label>
+    <input id="pet-name-input" maxlength="20" value="${escapeHtml(p.name || 'Клеверок')}" placeholder="Например: Клеверок" style="font-size:18px;font-family:var(--font-head);text-align:center">
+    <p style="color:var(--muted);font-size:13px;margin-top:8px;text-align:center"><i class="fa-solid fa-circle-info"></i> Имя видят все пользователи!</p>
+  `, () => {
+    const val = document.getElementById('pet-name-input').value.trim();
+    if (!val) { toast('Введите имя', 'fa-triangle-exclamation'); return false; }
+    if (val.length > 20) { toast('Слишком длинное', 'fa-triangle-exclamation'); return false; }
+    p.name = val;
+    saveAll(); renderPet();
+    toast('Питомец теперь ' + val + '!', 'fa-clover');
+    return true;
+  });
+}
+function patPet() {
+  const el = document.getElementById('pet-avatar');
+  const p = state.pet;
+  p.patCount = (p.patCount || 0) + 1;
+  p.mood = Math.min(100, p.mood + 5);
+  p.lastUpdate = Date.now();
+  saveAll();
+  if (el) { el.classList.add('happy'); setTimeout(() => el.classList.remove('happy'), 800); }
+  const phrases = ['Мурр!', 'Спасибо!', 'Я тебя люблю!', 'Ещё разок!', 'Клевер удачи!', 'Ты лучший!'];
+  const sp = document.getElementById('pet-speech');
+  if (sp) sp.textContent = randomFrom(phrases);
+  addXP(1);
+  checkAchievements();
+}
+function feedPet() {
+  const p = state.pet;
+  p.hunger = Math.min(100, p.hunger + 15);
+  p.mood = Math.min(100, p.mood + 5);
+  p.feedCount = (p.feedCount || 0) + 1;
+  p.lastUpdate = Date.now();
+  saveAll(); renderPet();
+  toast('Питомец покормлен!', 'fa-apple-whole');
+  for (let i = 0; i < 4; i++) setTimeout(() => spawnFloat('fa-apple-whole'), i * 100);
+  addXP(2);
+  checkAchievements();
+}
+function waterPet() {
+  const p = state.pet;
+  p.mood = Math.min(100, p.mood + 8);
+  p.lastUpdate = Date.now();
+  saveAll(); renderPet();
+  toast('Питомец полит!', 'fa-droplet');
+  for (let i = 0; i < 4; i++) setTimeout(() => spawnFloat('fa-droplet'), i * 100);
+  addXP(2);
+}
+function playPet() {
+  const p = state.pet;
+  p.mood = Math.min(100, p.mood + 12);
+  p.hunger = Math.max(0, p.hunger - 3);
+  p.lastUpdate = Date.now();
+  saveAll(); renderPet();
+  toast('Поиграли!', 'fa-baseball');
+  confetti();
+  addXP(3);
+}
+
+/* --- ДУДЛЫ --- */
+let doodleInit = false;
+let doodleSaveTimer = null;
+function initDoodle() {
+  const el = document.getElementById('tab-doodle');
+  el.innerHTML = `
+    <div class="section-head">
+      <h2><i class="fa-solid fa-palette"></i> Дудлы класса</h2>
+      <span style="color:var(--muted);font-size:14px"><i class="fa-solid fa-paintbrush"></i> Рисуй вместе!</span>
+    </div>
+    <div class="doodle-wrap">
+      <div class="doodle-tools">
+        <button class="color-btn active" style="background:#059669" data-color="#059669"></button>
+        <button class="color-btn" style="background:#f59e0b" data-color="#f59e0b"></button>
+        <button class="color-btn" style="background:#8b5cf6" data-color="#8b5cf6"></button>
+        <button class="color-btn" style="background:#ec4899" data-color="#ec4899"></button>
+        <button class="color-btn" style="background:#3b82f6" data-color="#3b82f6"></button>
+        <button class="color-btn" style="background:#ef4444" data-color="#ef4444"></button>
+        <button class="color-btn" style="background:#0f172a" data-color="#0f172a"></button>
+        <input type="range" id="doodle-size" min="1" max="30" value="4">
+        <button class="btn btn-small" onclick="doodleClear()"><i class="fa-solid fa-eraser"></i> Очистить</button>
+        <button class="btn btn-small" onclick="doodleSave()"><i class="fa-solid fa-floppy-disk"></i> В архив</button>
+      </div>
+      <canvas id="doodle-canvas"></canvas>
+      <p style="text-align:center;color:var(--muted);font-size:13px;margin-top:10px"><i class="fa-solid fa-lightbulb"></i> Рисунок сохраняется автоматически в облако</p>
+    </div>
+  `;
+  const canvas = document.getElementById('doodle-canvas');
+  const ctx = canvas.getContext('2d');
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width;
+  canvas.height = 400;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.strokeStyle = '#059669'; ctx.lineWidth = 4;
+  if (state.doodle) {
+    const img = new Image();
+    img.onload = () => ctx.drawImage(img, 0, 0);
+    img.src = state.doodle;
+  }
+  let drawing = false, lastX = 0, lastY = 0;
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+    const y = (e.touches ? e.touches[0].clientY : e.clientY) - r.top;
+    return { x: x * (canvas.width / r.width), y: y * (canvas.height / r.height) };
+  }
+  function start(e) { e.preventDefault(); drawing = true; const p = getPos(e); lastX = p.x; lastY = p.y; ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(lastX + 0.01, lastY + 0.01); ctx.stroke(); }
+  function move(e) { if (!drawing) return; e.preventDefault(); const p = getPos(e); ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(p.x, p.y); ctx.stroke(); lastX = p.x; lastY = p.y; }
+  function end() { if (!drawing) return; drawing = false; scheduleDoodleSave(); }
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  canvas.addEventListener('mouseup', end);
+  canvas.addEventListener('mouseleave', end);
+  canvas.addEventListener('touchstart', start, { passive: false });
+  canvas.addEventListener('touchmove', move, { passive: false });
+  canvas.addEventListener('touchend', end);
+  document.querySelectorAll('.doodle-tools .color-btn').forEach(b => {
+    b.onclick = () => {
+      document.querySelectorAll('.doodle-tools .color-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active'); ctx.strokeStyle = b.dataset.color;
+    };
+  });
+  document.getElementById('doodle-size').oninput = e => { ctx.lineWidth = parseInt(e.target.value); };
+  doodleInit = true;
+}
+function scheduleDoodleSave() {
+  clearTimeout(doodleSaveTimer);
+  doodleSaveTimer = setTimeout(() => {
+    saveDoodleAuto();
+  }, 1500); // Сохраняем через 1.5 сек после последнего штриха
+}
+function saveDoodleAuto() {
+  const c = document.getElementById('doodle-canvas');
+  if (!c) return;
+  state.doodle = c.toDataURL('image/jpeg', 0.6);
+  saveAll();
+  const u = currentUser();
+  if (u && !u.achievements.includes('artist')) { unlockAchievement('artist'); addXP(5); }
+}
+function doodleClear() {
+  if (!confirm('Очистить холст?')) return;
+  const c = document.getElementById('doodle-canvas');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  state.doodle = null;
+  saveAll();
+  toast('Холст очищен', 'fa-eraser');
+}
+function doodleSave() {
+  const c = document.getElementById('doodle-canvas');
+  const a = document.createElement('a');
+  a.download = 'doodle-7b.png';
+  a.href = c.toDataURL('image/png');
+  a.click();
+  toast('Скачано!', 'fa-download');
+}
+
+/* --- АЧИВКИ --- */
+function renderAchievements() {
+  const el = document.getElementById('tab-achievements');
+  const u = currentUser();
+  const unlocked = u ? u.achievements : [];
+  const pct = Math.round(unlocked.length / ACHIEVEMENTS.length * 100);
+  let html = `
+    <div class="section-head">
+      <h2><i class="fa-solid fa-trophy"></i> Достижения</h2>
+      <span style="color:var(--muted);font-size:14px;font-family:var(--font-head)">
+        <i class="fa-solid fa-star"></i> ${unlocked.length} / ${ACHIEVEMENTS.length} (${pct}%)
+      </span>
+    </div>
+    <div class="ach-grid">
+  `;
+  ACHIEVEMENTS.forEach(a => {
+    const has = unlocked.includes(a.id);
+    html += `
+      <div class="ach-card ${has ? 'unlocked' : 'locked'}">
+        <div class="ach-icon"><i class="fa-solid ${a.icon}"></i></div>
+        <div class="ach-info">
+          <h4>${a.name}</h4>
+          <p>${a.desc}</p>
+        </div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+/* ============================================================
+   МОДАЛКА
+   ============================================================ */
+let modalSaveHandler = null;
+function openModal(title, bodyHtml, onSave, opts = {}) {
+  document.getElementById('modal-title').innerHTML = title;
+  document.getElementById('modal-body').innerHTML = bodyHtml;
+  const saveBtn = document.getElementById('modal-save');
+  const actions = document.getElementById('modal-actions');
+  if (opts.hideSave) {
+    saveBtn.style.display = 'none';
+    actions.style.display = 'none';
+  } else {
+    saveBtn.style.display = 'inline-flex';
+    actions.style.display = 'flex';
+  }
+  document.getElementById('modal').classList.add('open');
+  modalSaveHandler = () => {
+    const ok = onSave ? onSave() : true;
+    if (ok !== false) closeModal();
+  };
+  saveBtn.onclick = modalSaveHandler;
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  modalSaveHandler = null;
+}
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target.id === 'modal') closeModal();
+});
+
+/* ============================================================
+   ПОМОДОРО
+   ============================================================ */
+let pomoInterval = null, pomoTimeLeft = 25*60, pomoRunning = false, pomoMode = 'work';
+document.getElementById('pomodoro-toggle').onclick = () => {
+  document.getElementById('pomodoro-panel').classList.toggle('open');
+};
+function updatePomoDisplay() {
+  const m = Math.floor(pomoTimeLeft/60), s = pomoTimeLeft%60;
+  document.getElementById('pomo-time').textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+function pomoStart() {
+  if (pomoRunning) return;
+  pomoRunning = true;
+  pomoInterval = setInterval(() => {
+    pomoTimeLeft--;
+    updatePomoDisplay();
+    if (pomoTimeLeft <= 0) {
+      clearInterval(pomoInterval); pomoRunning = false;
+      confetti();
+      toast(pomoMode === 'work' ? 'Работа окончена!' : 'Отдых закончен!', 'fa-bell');
+      if (pomoMode === 'work') { pomoMode = 'break'; pomoTimeLeft = 5*60; }
+      else { pomoMode = 'work'; pomoTimeLeft = 25*60; }
+      updatePomoDisplay();
+    }
+  }, 1000);
+}
+function pomoPause() { clearInterval(pomoInterval); pomoRunning = false; }
+function pomoReset() {
+  clearInterval(pomoInterval); pomoRunning = false;
+  pomoMode = 'work'; pomoTimeLeft = 25*60; updatePomoDisplay();
+}
+updatePomoDisplay();
+
+/* ============================================================
+   ПАСХАЛКИ
+   ============================================================ */
+let logoClicks = 0, logoTimer = null;
+document.getElementById('logo').addEventListener('click', () => {
+  logoClicks++;
+  clearTimeout(logoTimer);
+  logoTimer = setTimeout(() => logoClicks = 0, 1200);
+  if (logoClicks === 7) {
+    logoClicks = 0; confetti();
+    setTimeout(() => toast('Секрет найден! 7Б — лучший класс!', 'fa-star'), 300);
+    addXP(20);
+  }
+});
+document.getElementById('logo').addEventListener('contextmenu', e => {
+  e.preventDefault();
+  toast('Псст... тут ничего нет. Или есть?', 'fa-eye');
+  for (let i = 0; i < 5; i++) setTimeout(() => spawnFloat('fa-magnifying-glass'), i * 150);
+});
+const konami = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let konamiIdx = 0;
+document.addEventListener('keydown', e => {
+  if (e.key === konami[konamiIdx] || e.key.toLowerCase() === konami[konamiIdx]) {
+    konamiIdx++;
+    if (konamiIdx === konami.length) {
+      konamiIdx = 0;
+      for (let i = 0; i < 30; i++) setTimeout(() => spawnFloat(['fa-rocket','fa-star','fa-sparkles','fa-bolt'][Math.floor(Math.random()*4)]), i * 80);
+      setTimeout(() => toast('Чит-код активирован!', 'fa-rocket'), 300);
+      addXP(100);
+      unlockAchievement('konami');
+    }
+  } else konamiIdx = 0;
+});
+let typedBuf = '';
+document.addEventListener('keypress', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  typedBuf = (typedBuf + e.key.toLowerCase()).slice(-10);
+  const words = {
+    'квас': { icons: ['fa-beer-mug-empty','fa-mug-hot'], msg: 'Привет от Квасыча!', i: 'fa-beer-mug-empty' },
+    'гордей': { icons: ['fa-crown','fa-star'], msg: 'Слава Гордею!', conf: true, i: 'fa-crown' },
+    'владелец': { icons: ['fa-crown','fa-gem'], msg: 'Владелец сайта!', conf: true, i: 'fa-crown' },
+    'учитель': { icons: ['fa-apple-whole','fa-graduation-cap'], msg: 'Учителя — наше всё!', i: 'fa-apple-whole' },
+    'лол': { icons: ['fa-face-laugh','fa-face-grin-stars'], msg: 'Ахахаха!', i: 'fa-face-laugh' },
+    'кофе': { icons: ['fa-mug-hot'], msg: 'Кофе-брейк!', i: 'fa-mug-hot' },
+    'привет': { icons: ['fa-hand-wave'], msg: 'Привет-привет!', i: 'fa-hand-wave' },
+    'пятёрка': { icons: ['fa-star','fa-trophy'], msg: 'Пятёрка в дневник!', conf: true, i: 'fa-star' },
+    'кот': { icons: ['fa-cat'], msg: 'Мяу!', i: 'fa-cat' },
+    'школа': { icons: ['fa-school'], msg: 'Школа — второй дом!', i: 'fa-school' },
+    'перемена': { icons: ['fa-person-running'], msg: 'Скорее на перемену!', i: 'fa-person-running' },
+    'сердце': { icons: ['fa-heart'], msg: 'Люблю 7Б!', i: 'fa-heart' },
+    'огонь': { icons: ['fa-fire'], msg: 'Огонь!', i: 'fa-fire' },
+    'звезда': { icons: ['fa-star'], msg: 'Ты звезда!', i: 'fa-star' },
+    'пицца': { icons: ['fa-pizza-slice'], msg: 'Пицца!', i: 'fa-pizza-slice' },
+    'игра': { icons: ['fa-gamepad'], msg: 'Во что поиграем?', i: 'fa-gamepad' }
+  };
+  for (const w in words) {
+    if (typedBuf.includes(w)) {
+      typedBuf = '';
+      if (words[w].conf) confetti();
+      words[w].icons.forEach((ic, i) => setTimeout(() => spawnFloat(ic), i * 120));
+      toast(words[w].msg, words[w].i);
+      addXP(2);
+      break;
+    }
+  }
+});
+document.addEventListener('dblclick', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'CANVAS') return;
+  const icons = ['fa-star','fa-sparkles','fa-bolt','fa-heart','fa-clover','fa-gem'];
+  for (let i = 0; i < 8; i++) {
+    const el = document.createElement('div');
+    el.className = 'emoji-burst';
+    el.innerHTML = `<i class="fa-solid ${icons[Math.floor(Math.random()*icons.length)]}" style="color:var(--primary)"></i>`;
+    el.style.left = e.clientX + 'px';
+    el.style.top = e.clientY + 'px';
+    const angle = (Math.PI * 2 * i) / 8;
+    el.style.setProperty('--dx', Math.cos(angle) * 100 + 'px');
+    el.style.setProperty('--dy', Math.sin(angle) * 100 + 'px');
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 800);
+  }
+});
+
+setInterval(() => {
+  if (document.hidden || document.getElementById('app').style.display === 'none') return;
+  if (Math.random() < 0.3) {
+    const r = Math.random();
+    if (r < 0.3) {
+      const cat = document.createElement('div');
+      cat.className = 'walking-cat';
+      cat.innerHTML = '<i class="fa-solid fa-cat"></i>';
+      document.body.appendChild(cat);
+      setTimeout(() => cat.remove(), 8500);
+    } else if (r < 0.5) spawnFloat('fa-ghost');
+    else if (r < 0.7) spawnFloat('fa-frog');
+    else if (r < 0.85) spawnFloat('fa-rocket');
+    else spawnFloat('fa-dragon');
+  }
+}, 90000);
+
+setInterval(() => {
+  if (document.hidden || document.getElementById('app').style.display === 'none') return;
+  if (Math.random() < 0.5) {
+    const star = document.createElement('div');
+    star.className = 'falling-star';
+    star.innerHTML = '<i class="fa-solid fa-star"></i>';
+    star.style.left = (Math.random() * 80 + 10) + '%';
+    star.style.top = '-60px';
+    star.style.animation = 'fallDown ' + (5 + Math.random() * 3) + 's linear forwards';
+    star.onclick = () => {
+      confetti();
+      toast('Поймал звезду! +15 XP', 'fa-star');
+      addXP(15);
+      unlockAchievement('secret_star');
+      star.remove();
+    };
+    document.body.appendChild(star);
+    setTimeout(() => star.remove(), 9000);
+  }
+}, 45000);
+
+setInterval(() => {
+  if (document.hidden || document.getElementById('app').style.display === 'none') return;
+  if (Math.random() < 0.12) {
+    const btn = document.createElement('button');
+    btn.className = 'secret-star';
+    btn.innerHTML = '<i class="fa-solid fa-gem"></i>';
+    btn.style.top = (15 + Math.random()*60) + 'vh';
+    btn.style.left = (10 + Math.random()*80) + 'vw';
+    btn.onclick = () => {
+      confetti();
+      toast('Секретный самоцвет! +50 XP', 'fa-gem');
+      addXP(50);
+      btn.remove();
+    };
+    document.body.appendChild(btn);
+    setTimeout(() => btn.remove(), 12000);
+  }
+}, 120000);
+
+console.log('%c7Б • Классный портал v5 (Firebase)', 'font-size:24px;color:#10b981;font-weight:bold;font-family:Fredoka');
+console.log('%cОблачная синхронизация включена!', 'color:#059669;font-size:14px');
+
+function spawnFloat(icon) {
+  const el = document.createElement('div');
+  el.className = 'easter-float';
+  el.innerHTML = `<i class="fa-solid ${icon}"></i>`;
+  el.style.left = (Math.random() * 80 + 10) + '%';
+  el.style.fontSize = (Math.random() * 20 + 30) + 'px';
+  el.style.animationDuration = (3 + Math.random() * 2) + 's';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 5000);
+}
+function confetti() {
+  const icons = ['fa-star','fa-sparkles','fa-bolt','fa-heart','fa-clover','fa-gem','fa-crown','fa-gift','fa-rainbow'];
+  const colors = ['#059669','#10b981','#f59e0b','#8b5cf6','#ef4444','#3b82f6','#ec4899','#fbbf24'];
+  for (let i = 0; i < 45; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'easter-float';
+      const ic = icons[Math.floor(Math.random() * icons.length)];
+      const col = colors[Math.floor(Math.random() * colors.length)];
+      el.innerHTML = `<i class="fa-solid ${ic}" style="color:${col};text-shadow:0 0 12px ${col}80"></i>`;
+      el.style.left = (Math.random() * 90 + 5) + '%';
+      el.style.fontSize = (Math.random() * 20 + 20) + 'px';
+      el.style.animationDuration = (2 + Math.random() * 2) + 's';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4500);
+    }, i * 55);
+  }
+}
+
+/* ============================================================
+   УТИЛИТЫ
+   ============================================================ */
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function formatDate(d) { return String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0'); }
+function formatDateTime(d) { return formatDate(d) + ' ' + formatTime(d); }
+function formatTime(d) { return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
+function toast(text, icon) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = text;
+  t.querySelector('i').className = 'fa-solid ' + (icon || 'fa-circle-info');
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ============================================================
+   СТАРТ
+   ============================================================ */
+if (state.current && currentUser()) enterApp();
+else { state.current = null; document.getElementById('auth').style.display = 'flex'; }
+document.getElementById('log-pass').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+document.getElementById('reg-pass').addEventListener('keydown', e => { if (e.key === 'Enter') register(); });
+
+// Подключаемся к облаку
+initCloudSync();
+
+setInterval(() => {
+  if (document.getElementById('app').style.display !== 'none') {
+    const p = state.pet;
+    const mins = (Date.now() - p.lastUpdate) / 60000;
+    p.hunger = Math.max(0, p.hunger - mins * 2);
+    p.mood = Math.max(0, p.mood - mins * 1);
+    p.lastUpdate = Date.now();
+    saveAllLocal();
+    if (document.getElementById('tab-pet').classList.contains('active')) renderPet();
+  }
+}, 60000);
+
+setInterval(() => {
+  const oc = document.querySelector('.online-count');
+  if (oc) oc.innerHTML = `<span class="online-dot"></span> ${countOnline()} онлайн`;
+}, 30000);
+</script>
+</body>
+</html>
